@@ -5,6 +5,10 @@ use Mchekhashvili\RsWaybill\Requests\CheckServiceUserRequest;
 use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
 
 test("Check Service User request returns proper Dto", function () {
+    $response = (new WaybillServiceConnector())
+        ->send(new CheckServiceUserRequest(getServiceUserCredentials()))
+        ->dto();
+    dd($response);
     expect((new WaybillServiceConnector())
             ->send(new CheckServiceUserRequest(getServiceUserCredentials()))
             ->dto()
