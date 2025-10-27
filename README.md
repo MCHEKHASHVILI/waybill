@@ -1,1 +1,1 @@
-SDK to work with Revenue Service Soap Api: WabybillService
+Handler of Api: https://services.rs.ge/WayBillService/WayBillService.asmx
