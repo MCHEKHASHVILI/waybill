@@ -1,0 +1,39 @@
+{
+    "name": "mchekhashvili/rs-waybill",
+    "description": "RS Waybill api service implementation",
+    "authors": [
+        {
+            "name": "MCHEKHASHVILI",
+            "email": "m.chekhashvili@gmail.com"
+        }
+    ],
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Mchekhashvili\\RsWaybill\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "saloonphp/saloon": "^3.0",
+        "saloonphp/xml-wrangler": "v1.x-dev",
+        "nesbot/carbon": "3.x-dev"
+    },
+    "require-dev": {
+        "pestphp/pest": "3.x-dev",
+        "symfony/var-dumper": "7.4.x-dev"
+    },
+    "scripts": {
+        "pest": "./vendor/bin/pest"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
