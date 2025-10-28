@@ -9,4 +9,5 @@ enum AuthMethod
     case GUEST;
     case TENANT;
     case SERVICE_USER;
+    case BOTH;
 }

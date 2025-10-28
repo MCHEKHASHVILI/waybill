@@ -28,6 +28,10 @@ class WaybillServiceAuthenticator implements Authenticator
         match ($baseRequest->getAuthMethod()) {
             AuthMethod::TENANT => $this->authenticateTenant($baseRequest),
             AuthMethod::SERVICE_USER => $this->authenticateServiceUser($baseRequest),
+            AuthMethod::BOTH => (function ($request) {
+                $this->authenticateTenant($request);
+                $this->authenticateServiceUser($request);
+            })($baseRequest),
             default => self::actAsGuest($baseRequest)
         };
     }
