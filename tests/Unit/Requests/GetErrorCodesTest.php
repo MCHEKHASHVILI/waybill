@@ -5,7 +5,7 @@ use Mchekhashvili\RsWaybill\Requests\GetErrorCodesRequest;
 use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
 
 test("returned response is an array of " . ErrorCode::class, function () {
-    $response = (new WaybillServiceConnector())->send(new GetErrorCodesRequest(getServiceUserCredentials()))->dto();
-    expect($response)->toBeArray();
-    expect($response)->toContainOnlyInstancesOf(ErrorCode::class);
+    $dto = (new WaybillServiceConnector())->send(new GetErrorCodesRequest(getServiceUserCredentials()))->dto();
+    expect($dto)->toBeArray();
+    expect($dto)->toContainOnlyInstancesOf(ErrorCode::class);
 });

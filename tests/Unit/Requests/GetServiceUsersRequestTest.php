@@ -5,7 +5,7 @@ use Mchekhashvili\RsWaybill\Requests\GetServiceUsersRequest;
 use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
 
 test("returned response is an array of " . ServiceUser::class, function () {
-    $response = (new WaybillServiceConnector())->send(new GetServiceUsersRequest(getTenantCredentials()))->dto();
-    expect($response)->toBeArray();
-    expect($response)->toContainOnlyInstancesOf(ServiceUser::class);
+    $dto = (new WaybillServiceConnector())->send(new GetServiceUsersRequest(getTenantCredentials()))->dto();
+    expect($dto)->toBeArray();
+    expect($dto)->toContainOnlyInstancesOf(ServiceUser::class);
 });

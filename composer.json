@@ -21,8 +21,7 @@
     },
     "require": {
         "saloonphp/saloon": "^3.0",
-        "saloonphp/xml-wrangler": "v1.x-dev",
-        "nesbot/carbon": "3.x-dev"
+        "saloonphp/xml-wrangler": "v1.x-dev"
     },
     "require-dev": {
         "pestphp/pest": "3.x-dev",

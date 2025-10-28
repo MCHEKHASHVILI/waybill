@@ -1,26 +1,42 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\Convertable\ExciseCode;
+use Mchekhashvili\RsWaybill\Dtos\Static\ExciseCode;
 use Mchekhashvili\RsWaybill\Requests\GetExciseCodesRequest;
 use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
 
 test("returned response is an array of " . ExciseCode::class, function () {
-    $response = (new WaybillServiceConnector())
+    $dto = (new WaybillServiceConnector())
         ->send(new GetExciseCodesRequest(getServiceUserCredentials()))
         ->dto();
-    expect($response)->toBeArray();
-    expect($response)->toContainOnlyInstancesOf(ExciseCode::class);
+    expect($dto)->toBeArray();
+    expect($dto)->toContainOnlyInstancesOf(ExciseCode::class);
 });
 
-test("Can be filtered by name by setting the {search} key of " . ExciseCode::class . " and pushing it as request param", function () {
+test("Pollibility to sned filter keyword: 's_text' (string)", function () {
     $searchable = "ვისკი";
-    $exiseCode = new ExciseCode();
-    $exiseCode->search = $searchable;
-    $response = (new WaybillServiceConnector(...array_values(getServiceUserCredentials())))
-        ->send(new GetExciseCodesRequest($exiseCode))
+    $dto = (new WaybillServiceConnector(...array_values(getServiceUserCredentials())))
+        ->send(new GetExciseCodesRequest([
+            's_text' => $searchable,
+        ]))
         ->dto();
-    expect($response)->toBeArray();
-    expect($response)->toContainOnlyInstancesOf(ExciseCode::class);
-    expect($response[0]->name)->toBeString(ExciseCode::class . "failed to get the proper response for first item in array");
-    expect($response[0]->name)->toContain($searchable);
+    expect($dto)->toBeArray();
+    expect($dto)->toContainOnlyInstancesOf(ExciseCode::class);
+    expect($dto[0]->name)->toBeString(ExciseCode::class . "failed to get the proper dto for first item in response array");
+    expect($dto[0]->name)->toContain($searchable);
+});
+
+test("Will not break by accidentally passing wring filter keywords", function () {
+    $searchable = "ვისკი";
+
+    $dto = (new WaybillServiceConnector(...array_values(getServiceUserCredentials())))
+        ->send(new GetExciseCodesRequest([
+            's_text' => $searchable,
+            's_text1' => "s_text1",
+            's_text2' => "s_text2",
+        ]))
+        ->dto();
+    expect($dto)->toBeArray();
+    expect($dto)->toContainOnlyInstancesOf(ExciseCode::class);
+    expect($dto[0]->name)->toBeString(ExciseCode::class . "failed to get the proper dto for first item in response array");
+    expect($dto[0]->name)->toContain($searchable);
 });

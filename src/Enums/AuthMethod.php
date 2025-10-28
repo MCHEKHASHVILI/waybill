@@ -6,6 +6,7 @@ namespace Mchekhashvili\RsWaybill\Enums;
 
 enum AuthMethod
 {
+    case GUEST;
     case TENANT;
     case SERVICE_USER;
 }

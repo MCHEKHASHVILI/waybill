@@ -27,7 +27,8 @@ class WaybillServiceAuthenticator implements Authenticator
 
         match ($baseRequest->getAuthMethod()) {
             AuthMethod::TENANT => $this->authenticateTenant($baseRequest),
-            AuthMethod::SERVICE_USER => $this->authenticateServiceUser($baseRequest)
+            AuthMethod::SERVICE_USER => $this->authenticateServiceUser($baseRequest),
+            default => self::actAsGuest($baseRequest)
         };
     }
 
@@ -44,5 +45,9 @@ class WaybillServiceAuthenticator implements Authenticator
             'su' => $this->service_username,
             'sp' => $this->service_password,
         ]);
+    }
+    private static function actAsGuest(BaseRequest $baseRequest): void
+    {
+        // ...
     }
 }

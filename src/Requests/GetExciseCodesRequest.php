@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Mchekhashvili\RsWaybill\Requests;
 
-use Carbon\Carbon;
+use DateTimeImmutable;
 use Saloon\Http\Response;
 use Mchekhashvili\RsWaybill\Enums\Action;
 use Mchekhashvili\RsWaybill\Requests\BaseRequest;
+use Mchekhashvili\RsWaybill\Dtos\Static\ExciseCode;
 use Mchekhashvili\RsWaybill\Traits\Requests\HasParams;
-use Mchekhashvili\RsWaybill\Dtos\Convertable\ExciseCode;
 use Mchekhashvili\RsWaybill\Interfaces\Requests\HasParamsInterface;
 
 class GetExciseCodesRequest extends BaseRequest implements HasParamsInterface
@@ -29,8 +29,8 @@ class GetExciseCodesRequest extends BaseRequest implements HasParamsInterface
                     unit_name: isset($val["MEASUREMENT"]) ? (string) $val["MEASUREMENT"] : null,
                     code: (int) $val["SAKON_KODI"],
                     rate: (float) $val["AKCIS_GANAKV"],
-                    started_at: isset($val["START_DATE"]) ? Carbon::parse($val["START_DATE"]) : null,
-                    ended_at: isset($val["END_DATE"]) ? Carbon::parse($val["END_DATE"]) : null,
+                    started_at: isset($val["START_DATE"]) ? DateTimeImmutable::createFromFormat("Y-m-d", $val["START_DATE"]) : null,
+                    ended_at: isset($val["END_DATE"]) ? DateTimeImmutable::createFromFormat("Y-m-d", $val["END_DATE"]) : null,
                 );
                 return $carry;
             },
