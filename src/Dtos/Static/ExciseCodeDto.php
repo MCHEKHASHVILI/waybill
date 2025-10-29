@@ -6,7 +6,7 @@ namespace Mchekhashvili\RsWaybill\Dtos\Static;
 
 use DateTimeImmutable;
 
-class ExciseCode
+class ExciseCodeDto
 {
     public function __construct(
         public readonly int $id,

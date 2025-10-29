@@ -8,7 +8,8 @@ use Saloon\Http\Response;
 use Mchekhashvili\RsWaybill\Enums\Action;
 use Mchekhashvili\RsWaybill\Enums\AuthMethod;
 use Mchekhashvili\RsWaybill\Requests\BaseRequest;
-use Mchekhashvili\RsWaybill\Dtos\Static\ServiceUser;
+use Mchekhashvili\RsWaybill\Dtos\InBuilt\ArrayDto;
+use Mchekhashvili\RsWaybill\Dtos\Static\ServiceUserDto;
 use Mchekhashvili\RsWaybill\Traits\Requests\HasParams;
 use Mchekhashvili\RsWaybill\Interfaces\Requests\HasParamsInterface;
 
@@ -18,20 +19,22 @@ class GetServiceUsersRequest extends BaseRequest implements HasParamsInterface
     protected Action $action = Action::GET_SERVICE_USERS;
     protected AuthMethod $authMethod = AuthMethod::TENANT;
     public function __construct(protected mixed $params = []) {}
-    public function createDtoFromResponse(Response $response): array
+    public function createDtoFromResponse(Response $response): ArrayDto
     {
-        return array_reduce(
-            $response->xmlReader()->xpathValue("//ServiceUsers/ServiceUser")->get(),
-            function ($carry, $val) {
-                $carry[] =  new ServiceUser(
-                    id: (int) $val['ID'],
-                    username: (string) $val['USER_NAME'],
-                    tenant_id: (int) $val['UN_ID'],
-                    name: (string) $val['NAME'],
-                );
-                return $carry;
-            },
-            []
+        return new ArrayDto(
+            data: array_reduce(
+                $response->xmlReader()->xpathValue("//ServiceUsers/ServiceUser")->get(),
+                function ($carry, $val) {
+                    $carry[] =  new ServiceUserDto(
+                        id: (int) $val['ID'],
+                        username: (string) $val['USER_NAME'],
+                        tenant_id: (int) $val['UN_ID'],
+                        name: (string) $val['NAME'],
+                    );
+                    return $carry;
+                },
+                []
+            )
         );
     }
 }

@@ -8,13 +8,15 @@ describe("Connector with no credentials", function () {
         $connector = new WaybillServiceConnector();
         $request = new CheckServiceUserRequest();
         $response = $connector->send($request)->dto();
-        expect($response->registered)->toBeFalse("Empty credentials returned true value of service user");
+        expect($response)->toHaveProperty("active");
+        expect($response->active)->toBeFalse("Empty credentials returned true value of service user");
     });
     test("Can pass authentication if request receives proper service_user credentials", function () {
         $connector = new WaybillServiceConnector();
         $request = new CheckServiceUserRequest(getServiceUserCredentials());
         $response = $connector->send($request)->dto();
-        expect($response->registered)->toBeTrue("Request does not ovverride auth params or test user declared in PestPHP is deleted from eservices.rs.ge database");
+        expect($response)->toHaveProperty("active");
+        expect($response->active)->toBeTrue("Request does not ovverride auth params or test user declared in PestPHP is deleted from eservices.rs.ge database");
     });
 });
 
@@ -23,7 +25,8 @@ describe("Connector with credentials", function () {
         $connector = new WaybillServiceConnector(...array_values(getServiceUserCredentials()));
         $request = new CheckServiceUserRequest();
         $response = $connector->send($request)->dto();
-        expect($response->registered)->toBeTrue("Test credentials returned false value, service user may be deleted from eservices.rs.ge. database");
+        expect($response)->toHaveProperty("active");
+        expect($response->active)->toBeTrue("Test credentials returned false value, service user may be deleted from eservices.rs.ge. database");
     });
     test("Can pass authentication if request receives proper service_user credentials", function () {
         $connector = new WaybillServiceConnector(...array_values(getServiceUserCredentials()));
@@ -32,6 +35,7 @@ describe("Connector with credentials", function () {
             'sp' => 'invalid_credentials'
         ]);
         $response = $connector->send($request)->dto();
-        expect($response->registered)->toBeFalse("Request does not ovverride auth params");
+        expect($response)->toHaveProperty("active");
+        expect($response->active)->toBeFalse("Request does not ovverride auth params");
     });
 });

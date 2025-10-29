@@ -1,12 +1,13 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\Static\WhatIsMyIp;
+use Mchekhashvili\RsWaybill\Dtos\InBuilt\StringDto;
 use Mchekhashvili\RsWaybill\Requests\WhatIsMyIpRequest;
 use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
 
-test("Returns " . WhatIsMyIp::class . " with property (string) {ip}", function () {
+test("Returns " . StringDto::class . " with property (string) {value} which contains valid ip address", function () {
     $dto = (new WaybillServiceConnector())->send(new WhatIsMyIpRequest())->dto();
-    expect($dto)->toBeInstanceOf(WhatIsMyIp::class);
-    expect($dto)->toHaveProperty("ip");
-    expect($dto->ip)->toBeString("getting unexpected type of value for ip");
+    expect($dto)->toBeInstanceOf(StringDto::class);
+    expect($dto)->toHaveProperty("value");
+    expect($dto->value)->toBeString("getting unexpected type of value for ip");
+    expect(filter_var($dto->value, FILTER_VALIDATE_IP))->not->toBeFalse();
 });

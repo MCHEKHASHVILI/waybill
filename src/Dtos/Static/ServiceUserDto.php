@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Mchekhashvili\RsWaybill\Dtos\Static;
 
-class ErrorCode
+class ServiceUserDto
 {
     public function __construct(
         public readonly int $id,
-        public readonly string $message,
-        public readonly int|null $type_id,
+        public readonly string $username,
+        public readonly int $tenant_id,
+        public readonly string $name,
     ) {}
 }
