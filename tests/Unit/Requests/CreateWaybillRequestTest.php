@@ -1,0 +1,49 @@
+<?php
+
+use Mchekhashvili\RsWaybill\Dtos\Static\WaybillTypeDto;
+use Mchekhashvili\RsWaybill\Dtos\Static\WaybillCreatedDto;
+use Mchekhashvili\RsWaybill\Requests\CreateWaybillRequest;
+use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+
+test("returned response is an array of " . WaybillTypeDto::class, function () {
+    $data = [
+        "waybill" => [
+            "WAYBILL" => [
+                "ID" => "",
+                "TYPE" => "2",
+                "BUYER_TIN" => "12345678910",
+                "CHEK_BUYER_TIN" => "1",
+                "BUYER_NAME" => "შპს რემმშენი",
+                "START_ADDRESS" => "აგლაძის ქ. 32",
+                "END_ADDRESS" => "ჯავახეთის ქ.12a",
+                "DRIVER_TIN" => "12345678910",
+                "CHEK_DRIVER_TIN" => "1",
+                "DRIVER_NAME" => "Revazi",
+                "TRANSPORT_COAST" => "1000",
+                "RECEPTION_INFO" => "",
+                "RECEIVER_INFO" => "",
+                "DELIVERY_DATE" => "",
+                "STATUS" => "0",
+                "SELER_UN_ID" => "731937",
+                "PAR_ID" => "",
+                "FULL_AMOUNT" => "4",
+                "CAR_NUMBER" => "ADA123",
+                "WAYBILL_NUMBER" => "",
+                "S_USER_ID" => 783,
+                "BEGIN_DATE" => "2021-02-09T18:13:59",
+                "TRAN_COST_PAYER" => "2",
+                "TRANS_ID" => "1",
+                "TRANS_TXT" =>  "",
+                "COMMENT" => "manqana 1",
+                "CATEGORY" => "",
+            ]
+        ]
+    ];
+
+    $response = (new WaybillServiceConnector(...array_values(getServiceUserCredentials())))
+        ->send(new CreateWaybillRequest($data));
+
+    $dto = $response->dto();
+
+    expect($dto)->toBeInstanceOf(WaybillCreatedDto::class);
+});
