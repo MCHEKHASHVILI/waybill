@@ -10,12 +10,13 @@ use Mchekhashvili\RsWaybill\Enums\Action;
 use Mchekhashvili\RsWaybill\Enums\WaybillStatus;
 use Mchekhashvili\RsWaybill\Requests\BaseRequest;
 use Mchekhashvili\RsWaybill\Enums\WaybillCategory;
+use Mchekhashvili\RsWaybill\Dtos\Static\ProductDto;
 use Mchekhashvili\RsWaybill\Dtos\Static\WaybillDto;
 use Mchekhashvili\RsWaybill\Enums\DeliveryCostPayer;
 use Mchekhashvili\RsWaybill\Traits\Requests\HasParams;
 use Mchekhashvili\RsWaybill\Interfaces\Requests\HasParamsInterface;
 
-class SaveWaybillRequest extends BaseRequest implements HasParamsInterface
+class UpdateWaybillRequest extends BaseRequest implements HasParamsInterface
 {
     use HasParams;
     protected Action $action = Action::SAVE_WAYBILL;
@@ -26,7 +27,32 @@ class SaveWaybillRequest extends BaseRequest implements HasParamsInterface
         $this->keyMap = [
             "id" => "ID",
             "sub_waybills" => "SUB_WAYBILLS",
-            "goods_list" => "GOODS_LIST",
+            "goods_list" => [
+                "GOODS_LIST",
+                function (array $val) {
+                    return array_reduce(
+                        $val["GOODS_LIST"],
+                        function ($carry, $product) {
+                            $carry[] = new ProductDto(
+                                id: (int) $product["ID"],
+                                name: (string) $product["W_NAME"],
+                                unit_id: (int) $product["UNIT_ID"],
+                                unit_name: (string) $product["UNIT_TXT"],
+                                quantity: (float) $product["QUANTITY"],
+                                price: (int) $product["PRICE"],
+                                amount: (float) $product["AMOUNT"],
+                                bar_code: (string) $product["BAR_CODE"],
+                                vat_type: (int) $product["VAT_TYPE"],
+                                status: (int) $product["STATUS"],
+                                quantity_ext: isset($product["QUANTITY_F"]) ? (float) $product["QUANTITY_F"] : null
+                            );
+
+                            return $carry;
+                        },
+                        []
+                    );
+                }
+            ],
             "type_id" => "TYPE",
             "buyer_tin" => "BUYER_TIN",
             "buyer_is_resident" => "CHEK_BUYER_TIN",
