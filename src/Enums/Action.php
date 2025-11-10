@@ -14,7 +14,7 @@ enum Action: string
     case CREATE_SERVICE_USER = "create_service_user";
     case DELETE_WAYBILL = "del_waybill";
     case DELETE_BARCODE = "delete_bar_code";
-    case DELETE_CAR_NUMBERS = "delete_car_numbers";
+    case DELETE_VEHICLE_STATE_NUMBER = "delete_car_numbers";
     case DELETE_WAYBILL_TEMPLATE = "delete_waybill_tamplate";
     case GET_ADJUSTED_WAYBILL = "get_adjusted_waybill";
     case GET_ADJUSTED_WAYBILLS = "get_adjusted_waybills";
