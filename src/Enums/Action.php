@@ -13,13 +13,13 @@ enum Action: string
     case CONFIRM_WAYBILL = "confirm_waybill";
     case CREATE_SERVICE_USER = "create_service_user";
     case DELETE_WAYBILL = "del_waybill";
-    case DELETE_BAR_CODE = "delete_bar_code";
+    case DELETE_BARCODE = "delete_bar_code";
     case DELETE_CAR_NUMBERS = "delete_car_numbers";
     case DELETE_WAYBILL_TEMPLATE = "delete_waybill_tamplate";
     case GET_ADJUSTED_WAYBILL = "get_adjusted_waybill";
     case GET_ADJUSTED_WAYBILLS = "get_adjusted_waybills";
     case GET_EXCISE_CODES = "get_akciz_codes";
-    case GET_BAR_CODES = "get_bar_codes";
+    case GET_BARCODES = "get_bar_codes";
     case GET_BUYER_WAYBILL_GOODS_LIST = "get_buyer_waybilll_goods_list";
     case GET_BUYER_WAYBILLS = "get_buyer_waybills";
     case GET_BUYER_WAYBILLS_EX = "get_buyer_waybills_ex";
@@ -51,7 +51,7 @@ enum Action: string
     case REF_WAYBILL = "ref_waybill";
     case REF_WAYBILL_VD = "ref_waybill_vd";
     case REJECT_WAYBILL = "reject_waybill";
-    case SAVE_BAR_CODE = "save_bar_code";
+    case SAVE_BARCODE = "save_bar_code";
     case SAVE_CAR_NUMBERS = "save_car_numbers";
     case SAVE_INVOICE = "save_invoice";
     case SAVE_WAYBILL = "save_waybill";

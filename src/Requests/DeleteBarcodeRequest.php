@@ -11,22 +11,11 @@ use Mchekhashvili\RsWaybill\Dtos\InBuilt\BooleanDto;
 use Mchekhashvili\RsWaybill\Traits\Requests\HasParams;
 use Mchekhashvili\RsWaybill\Interfaces\Requests\HasParamsInterface;
 
-class CreateBarcodeRequest extends BaseRequest implements HasParamsInterface
+class DeleteBarcodeRequest extends BaseRequest implements HasParamsInterface
 {
     use HasParams;
-    protected Action $action = Action::SAVE_BARCODE;
-    protected array $keyMap;
-
-    public function __construct(protected mixed $params = [])
-    {
-        $this->keyMap = [
-            "id" => "bar_code",
-            "name" => "goods_name",
-            "unit_id" => "unit_id",
-            "unit_name" => "unit_txt",
-            "excise_id" => "a_id",
-        ];
-    }
+    protected Action $action = Action::DELETE_BARCODE;
+    public function __construct(protected mixed $params = []) {}
 
     public function createDtoFromResponse(Response $response): BooleanDto
     {
