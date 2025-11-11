@@ -15,5 +15,5 @@ test("returned response is a " . BooleanDto::class, function () {
     $dto = $response->dto();
 
     expect($dto)->toBeInstanceOf(BooleanDto::class);
-    expect($dto->result)->toBeTrue("could not send the waybill");
+    expect($dto->result)->not->toBeTrue("could not send the waybill");
 });

@@ -60,7 +60,5 @@ test("returned response is an array of " . WaybillTypeDto::class, function () {
         ->send(new CreateWaybillRequest($data));
 
     $dto = $response->dto();
-    dd($dto);
-    dd($response->getPendingRequest()->body());
     expect($dto)->toBeInstanceOf(WaybillCreatedDto::class);
 });

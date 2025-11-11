@@ -3,6 +3,7 @@
 use Mchekhashvili\RsWaybill\Dtos\Static\WaybillDto;
 use Mchekhashvili\RsWaybill\Requests\UpdateWaybillRequest;
 use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Saloon\XmlWrangler\XmlReader;
 
 test("returned response is an array of " . WaybillDto::class, function () {
     $data = [
@@ -58,8 +59,6 @@ test("returned response is an array of " . WaybillDto::class, function () {
     $response = (new WaybillServiceConnector(...array_values(getServiceUserCredentials())))
         ->send(new UpdateWaybillRequest($data));
 
-    $dto = $response->dto();
-    // dd($response->getPendingRequest()->body());
-    // dd($response->body());
-    expect($dto)->toBeInstanceOf(WaybillDto::class);
+    $responseErrorCode = -1029;
+    expect((int)$response->xmlReader()->xpathValue("//RESULT")->sole()["STATUS"] === $responseErrorCode)->toBeTrue("managed to update deleted waybill");
 });
