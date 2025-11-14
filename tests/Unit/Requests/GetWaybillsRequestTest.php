@@ -10,7 +10,6 @@ test("returned response is an array of " . WaybillDto::class, function () {
 
     // dd($response->body());
     $dto = $response->dto();
-    dd($dto);
     expect($dto)->toBeInstanceOf(ArrayDto::class);
     expect($dto)->toHaveProperty("data");
     expect($dto->data)->toContainOnlyInstancesOf(WaybillDto::class);
