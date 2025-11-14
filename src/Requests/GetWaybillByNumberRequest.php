@@ -16,10 +16,10 @@ use Mchekhashvili\RsWaybill\Enums\DeliveryCostPayer;
 use Mchekhashvili\RsWaybill\Traits\Requests\HasParams;
 use Mchekhashvili\RsWaybill\Interfaces\Requests\HasParamsInterface;
 
-class GetWaybillRequest extends BaseRequest implements HasParamsInterface
+class GetWaybillByNumberRequest extends BaseRequest implements HasParamsInterface
 {
     use HasParams;
-    protected Action $action = Action::GET_WAYBILL;
+    protected Action $action = Action::GET_WAYBILL_BY_NUMBER;
     protected array $keyMap;
     public function __construct(protected mixed $params = [])
     {
