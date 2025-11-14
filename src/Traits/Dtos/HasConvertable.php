@@ -13,6 +13,7 @@ trait HasConvertable
     {
         $reflectionClass = new ReflectionClass(static::class);
         $properties = $reflectionClass->getProperties();
+
         $mapedData = array_reduce($properties, function ($carry, $property) use ($data, $map) {
 
             // get type of property
