@@ -20,7 +20,7 @@ class WaybillDto implements ConvertableDtoInterface
         public readonly array|null $sub_waybills,
         public readonly array|null $goods_list,
         public readonly int|null $type_id,
-        public readonly int|null $buyer_tin,
+        public readonly string|null $buyer_tin,
         public readonly bool|null $buyer_is_resident,
         public readonly string|null $buyer_name,
         public readonly string|null $address_from,
