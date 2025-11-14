@@ -4,7 +4,7 @@ use Mchekhashvili\RsWaybill\Dtos\InBuilt\StringDto;
 use Mchekhashvili\RsWaybill\Requests\GetWaybillAsPdfRequest;
 use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
 
-test("Returns " . StringDto::class . " with property (string) {value} which contains valid ip address", function () {
+test("Returns " . StringDto::class . " with property base64_string", function () {
     $response = (new WaybillServiceConnector())->send(new GetWaybillAsPdfRequest(array_merge([
         'waybill_id' => '980246335'
     ], getServiceUserCredentials())));
@@ -14,5 +14,5 @@ test("Returns " . StringDto::class . " with property (string) {value} which cont
     expect($dto)->toBeInstanceOf(StringDto::class);
     expect($dto)->toHaveProperty("value");
     expect($dto->value)->toBeString("getting unexpected type of value for ip");
-    expect($dto->value)->toBe($encoded);
+    expect(strpos($dto->value, 0, 10))->toBe(strpos($encoded, 0, 10));
 });

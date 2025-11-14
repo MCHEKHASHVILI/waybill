@@ -8,10 +8,11 @@ use Mchekhashvili\RsWaybill\Requests\GetWaybillGoodsListRequest;
 test("returned response is an array of " . WaybillProductDto::class, function () {
     $response = (new WaybillServiceConnector())->send(new GetWaybillGoodsListRequest(array_merge(
         [
-            'create_date_s' => '2025-11-01'
+            'create_date_s' => (new DateTime("now"))->sub(new \DateInterval("P2D"))->format("Y-m-d\TH:i:s")
         ],
         getServiceUserCredentials()
     )));
+
 
     // dd($response->body());
     $dto = $response->dto();
