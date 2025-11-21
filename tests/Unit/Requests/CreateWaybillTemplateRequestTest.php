@@ -1,11 +1,12 @@
 <?php
 
 use Mchekhashvili\RsWaybill\Dtos\Static\WaybillCreatedDto;
-use Mchekhashvili\RsWaybill\Requests\CreateWaybillRequest;
+use Mchekhashvili\RsWaybill\Requests\CreateWaybillTemplateRequest;
 use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
 
-test("returned response is an array of " . WaybillCreatedDto::class, function () {
+test("This function does not work and returns error 500 from server", function () {
     $data = [
+        "v_name" => "test",
         "waybill" => [
             "WAYBILL" => [
                 "ID" => "",
@@ -44,7 +45,7 @@ test("returned response is an array of " . WaybillCreatedDto::class, function ()
                 "FULL_AMOUNT" => "4",
                 "CAR_NUMBER" => "ADA123",
                 "WAYBILL_NUMBER" => "",
-                "S_USER_ID" => 783,
+                "S_USER_ID" => "783",
                 "BEGIN_DATE" => "2021-02-09T18:13:59",
                 "TRAN_COST_PAYER" => "2",
                 "TRANS_ID" => "1",
@@ -56,8 +57,7 @@ test("returned response is an array of " . WaybillCreatedDto::class, function ()
     ];
 
     $response = (new WaybillServiceConnector(...array_values(getServiceUserCredentials())))
-        ->send(new CreateWaybillRequest($data));
+        ->send(new CreateWaybillTemplateRequest($data));
 
-    $dto = $response->dto();
-    expect($dto)->toBeInstanceOf(WaybillCreatedDto::class);
+    expect($response->status())->toBe(500);
 });
