@@ -53,3 +53,13 @@ function getServiceUserCredentials(): array
         'sp' => 'Password123!@#'
     ];
 }
+
+function getToday(): string
+{
+    return (new DateTimeImmutable())->format('Y-m-d');
+}
+
+function getYesterday(): string
+{
+    return (new DateTimeImmutable())->modify('-1 day')->format('Y-m-d');
+}
