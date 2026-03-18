@@ -6,29 +6,27 @@ namespace Mchekhashvili\RsWaybill\Requests;
 
 use Saloon\Http\Response;
 use Mchekhashvili\RsWaybill\Enums\Action;
-use Mchekhashvili\RsWaybill\Enums\AuthMethod;
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\StringDto;
+use Mchekhashvili\RsWaybill\Dtos\InBuilt\BooleanDto;
 use Mchekhashvili\RsWaybill\Traits\Requests\HasParams;
 use Mchekhashvili\RsWaybill\Interfaces\Requests\HasParamsInterface;
 
-class GetPayerTypeFromUnIdRequest extends BaseRequest implements HasParamsInterface
+class CreateBarcodeRequest extends BaseRequest implements HasParamsInterface
 {
     use HasParams;
 
-    protected Action     $action     = Action::GET_PAYER_TYPE_FROM_UN_ID;
-    protected AuthMethod $authMethod = AuthMethod::SERVICE_USER;
+    protected Action $action = Action::SAVE_BARCODE;
 
     public function __construct(protected mixed $params = []) {}
 
-    public function createDtoFromResponse(Response $response): StringDto
+    public function createDtoFromResponse(Response $response): BooleanDto
     {
         $data = array_map(
             fn($val) => $val->getContent(),
             $response->xmlReader()->element("{$this->action->value}Response")->sole()->getContent()
         );
 
-        return new StringDto(
-            value: (string) $data["{$this->action->value}Result"]
+        return new BooleanDto(
+            result: (int) $data["{$this->action->value}Result"] === 1
         );
     }
 }

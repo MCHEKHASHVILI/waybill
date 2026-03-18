@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Mchekhashvili\RsWaybill\Dtos\Static;
 
-class VehicleDto
+final class VehicleDto
 {
     public function __construct(
-        public readonly string $state_number
+        public readonly string $state_number,
     ) {}
 }

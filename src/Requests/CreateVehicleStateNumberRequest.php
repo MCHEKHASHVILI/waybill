@@ -6,7 +6,6 @@ namespace Mchekhashvili\RsWaybill\Requests;
 
 use Saloon\Http\Response;
 use Mchekhashvili\RsWaybill\Enums\Action;
-use Mchekhashvili\RsWaybill\Requests\BaseRequest;
 use Mchekhashvili\RsWaybill\Dtos\InBuilt\BooleanDto;
 use Mchekhashvili\RsWaybill\Traits\Requests\HasParams;
 use Mchekhashvili\RsWaybill\Interfaces\Requests\HasParamsInterface;
@@ -14,15 +13,10 @@ use Mchekhashvili\RsWaybill\Interfaces\Requests\HasParamsInterface;
 class CreateVehicleStateNumberRequest extends BaseRequest implements HasParamsInterface
 {
     use HasParams;
-    protected Action $action = Action::SAVE_CAR_NUMBERS;
-    protected array $keyMap;
 
-    public function __construct(protected mixed $params = [])
-    {
-        $this->keyMap = [
-            "vehicle_state_number" => "car_number",
-        ];
-    }
+    protected Action $action = Action::SAVE_CAR_NUMBERS;
+
+    public function __construct(protected mixed $params = []) {}
 
     public function createDtoFromResponse(Response $response): BooleanDto
     {

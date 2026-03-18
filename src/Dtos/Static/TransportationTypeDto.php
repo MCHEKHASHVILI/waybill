@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Mchekhashvili\RsWaybill\Dtos\Static;
 
-class TransportationTypeDto
+final class TransportationTypeDto
 {
     public function __construct(
-        public readonly int $id,
+        public readonly int    $id,
         public readonly string $name,
     ) {}
 }

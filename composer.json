@@ -8,7 +8,8 @@
         }
     ],
     "license": "MIT",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "Mchekhashvili\\RsWaybill\\": "src/"
@@ -21,16 +22,17 @@
     },
     "require": {
         "saloonphp/saloon": "^3.0",
-        "saloonphp/xml-wrangler": "v1.x-dev"
+        "saloonphp/xml-wrangler": "^1.0"
     },
     "require-dev": {
-        "pestphp/pest": "3.x-dev",
-        "symfony/var-dumper": "7.4.x-dev",
+        "pestphp/pest": "^3.0",
+        "symfony/var-dumper": "^7.0",
         "vlucas/phpdotenv": "^5.6"
     },
     "scripts": {
         "pest": "./vendor/bin/pest",
-        "pest:integration": "./vendor/bin/pest --filter=Unit"
+        "pest:unit": "./vendor/bin/pest tests/Unit/Requests/Mock",
+        "pest:integration": "./vendor/bin/pest tests/Unit/Requests --filter='^(?!.*Mock)'"
     },
     "config": {
         "allow-plugins": {
