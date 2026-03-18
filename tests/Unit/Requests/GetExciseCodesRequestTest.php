@@ -12,7 +12,7 @@ test("returned response is an array of " . ExciseCodeDto::class, function () {
     expect($dto)->toBeInstanceOf(ArrayDto::class);
     expect($dto)->toHaveProperty("data");
     expect($dto->data)->toContainOnlyInstancesOf(ExciseCodeDto::class);
-});
+})->skip(!hasCredentials(), 'RS_SERVICE_USERNAME / RS_SERVICE_PASSWORD not set in environment');
 
 test("Pollibility to sned filter keyword: 's_text' (string)", function () {
     $searchable = "ვისკი";
@@ -26,7 +26,7 @@ test("Pollibility to sned filter keyword: 's_text' (string)", function () {
     expect($dto->data)->toContainOnlyInstancesOf(ExciseCodeDto::class);
     expect($dto->data[0]->name)->toBeString(ExciseCodeDto::class . "failed to get the proper dto for first item in response array");
     expect($dto->data[0]->name)->toContain($searchable);
-});
+})->skip(!hasCredentials(), 'RS_SERVICE_USERNAME / RS_SERVICE_PASSWORD not set in environment');
 
 test("Will not break by accidentally passing wring filter keywords", function () {
     $searchable = "ვისკი";
@@ -43,4 +43,4 @@ test("Will not break by accidentally passing wring filter keywords", function ()
     expect($dto->data)->toContainOnlyInstancesOf(ExciseCodeDto::class);
     expect($dto->data[0]->name)->toBeString(ExciseCodeDto::class . "failed to get the proper dto for first item in response array");
     expect($dto->data[0]->name)->toContain($searchable);
-});
+})->skip(!hasCredentials(), 'RS_SERVICE_USERNAME / RS_SERVICE_PASSWORD not set in environment');

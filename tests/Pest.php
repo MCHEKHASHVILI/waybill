@@ -4,11 +4,6 @@
 |--------------------------------------------------------------------------
 | Test Case
 |--------------------------------------------------------------------------
-|
-| The closure you provide to your test functions is always bound to a specific PHPUnit test
-| case class. By default, that class is "PHPUnit\Framework\TestCase". Of course, you may
-| need to change it using the "pest()" function to bind a different classes or traits.
-|
 */
 
 pest()->extend(Tests\TestCase::class)->in('Feature');
@@ -17,11 +12,6 @@ pest()->extend(Tests\TestCase::class)->in('Feature');
 |--------------------------------------------------------------------------
 | Expectations
 |--------------------------------------------------------------------------
-|
-| When you're writing tests, you often need to check that values meet certain conditions. The
-| "expect()" function gives you access to a set of "expectations" methods that you can use
-| to assert different things. Of course, you may extend the Expectation API at any time.
-|
 */
 
 expect()->extend('toBeOne', function () {
@@ -30,27 +20,27 @@ expect()->extend('toBeOne', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Functions
+| Helpers
 |--------------------------------------------------------------------------
 |
-| While Pest is very powerful out-of-the-box, you may have some testing code specific to your
-| project that you don't want to repeat in every file. Here you can also expose helpers as
-| global functions to help you to reduce the number of lines of code in your test files.
+| Credentials are read from environment variables.
+| Copy .env.example to .env and fill in your values to run integration tests.
 |
 */
 
 function getTenantCredentials(): array
 {
     return [
-        'user_name' => 'tbilisi',
-        'user_password' => '123456'
+        'user_name' => $_ENV['RS_TENANT_USERNAME'] ?? '',
+        'user_password' => $_ENV['RS_TENANT_PASSWORD'] ?? '',
     ];
 }
+
 function getServiceUserCredentials(): array
 {
     return [
-        'su' => 'rsserviceuser:206322102',
-        'sp' => 'Password123!@#'
+        'su' => $_ENV['RS_SERVICE_USERNAME'] ?? '',
+        'sp' => $_ENV['RS_SERVICE_PASSWORD'] ?? '',
     ];
 }
 
@@ -62,4 +52,13 @@ function getToday(): string
 function getYesterday(): string
 {
     return (new DateTimeImmutable())->modify('-1 day')->format('Y-m-d');
+}
+
+/**
+ * Returns true only when real credentials are available in the environment.
+ * Integration tests should be skipped when they are not.
+ */
+function hasCredentials(): bool
+{
+    return !empty($_ENV['RS_SERVICE_USERNAME']) && !empty($_ENV['RS_SERVICE_PASSWORD']);
 }

@@ -17,7 +17,7 @@ describe("invalid inputs", function () {
         expect($dto)->toBeInstanceOf(BooleanDto::class);
         expect($dto)->toHaveProperty("result");
         expect($dto->result)->toBeFalse("is vat payer");
-    })->skip();
+    })->skip(!hasCredentials(), 'RS_SERVICE_USERNAME / RS_SERVICE_PASSWORD not set in environment');
 
     test("Vat payer using tin: Returns " . BooleanDto::class, function () {
         $response = (new WaybillServiceConnector())->send(new IsVatPayerTinRequest(
@@ -29,8 +29,9 @@ describe("invalid inputs", function () {
         expect($dto)->toBeInstanceOf(BooleanDto::class);
         expect($dto)->toHaveProperty("result");
         expect($dto->result)->toBeFalse("is vat payer");
-    })->skip();
+    })->skip(!hasCredentials(), 'RS_SERVICE_USERNAME / RS_SERVICE_PASSWORD not set in environment');
 });
+
 describe("valid inputs", function () {
     test("Vat payer using un_id: Returns " . BooleanDto::class, function () {
         $response = (new WaybillServiceConnector())->send(new IsVatPayerRequest(
@@ -42,7 +43,7 @@ describe("valid inputs", function () {
         expect($dto)->toBeInstanceOf(BooleanDto::class);
         expect($dto)->toHaveProperty("result");
         expect($dto->result)->toBeFalse("is vat payer");
-    });
+    })->skip(!hasCredentials(), 'RS_SERVICE_USERNAME / RS_SERVICE_PASSWORD not set in environment');
 
     test("Vat payer using tin: Returns " . BooleanDto::class, function () {
         $response = (new WaybillServiceConnector())->send(new IsVatPayerTinRequest(
@@ -54,5 +55,5 @@ describe("valid inputs", function () {
         expect($dto)->toBeInstanceOf(BooleanDto::class);
         expect($dto)->toHaveProperty("result");
         expect($dto->result)->toBeFalse("is vat payer");
-    });
+    })->skip(!hasCredentials(), 'RS_SERVICE_USERNAME / RS_SERVICE_PASSWORD not set in environment');
 });

@@ -60,4 +60,4 @@ test("returned response is an array of " . WaybillCreatedDto::class, function ()
 
     $dto = $response->dto();
     expect($dto)->toBeInstanceOf(WaybillCreatedDto::class);
-});
+})->skip(!hasCredentials(), 'RS_SERVICE_USERNAME / RS_SERVICE_PASSWORD not set in environment');
