@@ -6,15 +6,15 @@ namespace Mchekhashvili\RsWaybill\Dtos\Static;
 
 use DateTimeImmutable;
 
-class ExciseCodeDto
+final class ExciseCodeDto
 {
     public function __construct(
-        public readonly int $id,
-        public readonly string $name,
-        public readonly string|null $unit_name,
-        public readonly int $code,
-        public readonly float $rate,
-        public readonly DateTimeImmutable $started_at,
+        public readonly int                    $id,
+        public readonly string                 $name,
+        public readonly string|null            $unit_name,
+        public readonly int                    $code,
+        public readonly float                  $rate,
+        public readonly DateTimeImmutable|null $started_at,
         public readonly DateTimeImmutable|null $ended_at,
     ) {}
 }
