@@ -14,7 +14,7 @@ $okXml = <<<XML
 </soap:Envelope>
 XML;
 
-describe('WaybillServiceConnector — authentication', function () use ($okXml) {
+describe('WaybillServiceConnector \u2014 authentication', function () use ($okXml) {
 
     test('connector can be instantiated without credentials (guest mode)', function () {
         $connector = new WaybillServiceConnector();
@@ -50,7 +50,6 @@ describe('WaybillServiceConnector — authentication', function () use ($okXml) 
 
         $connector->send($request);
 
-        // After send(), the authenticator has merged su/sp into params
         expect($request->getParam('su'))->toBe('rsserviceuser:123');
         expect($request->getParam('sp'))->toBe('MyPass!');
     });
@@ -64,7 +63,8 @@ describe('WaybillServiceConnector — authentication', function () use ($okXml) 
         $connector->withMockClient($mockClient);
 
         $request = new GetServerTimeRequest([]);
-        expect($request->getAuthMethod())->toBe(AuthMethod::NONE);
+        // GetServerTimeRequest uses GUEST auth
+        expect($request->getAuthMethod())->toBe(AuthMethod::GUEST);
 
         $connector->send($request);
 

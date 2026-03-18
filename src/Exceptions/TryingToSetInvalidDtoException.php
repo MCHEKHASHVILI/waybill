@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Mchekhashvili\RsWaybill\Exceptions;
 
-use LogicException;
+use InvalidArgumentException;
 
-
-class TryingToSetInvalidDtoException extends LogicException
+class TryingToSetInvalidDtoException extends InvalidArgumentException
 {
-    protected $message = 'You are trying to set unrelated item to collection';
+    protected $message = 'You are trying to set an unrelated item in a collection.';
 }

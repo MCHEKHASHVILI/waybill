@@ -12,65 +12,43 @@ use Mchekhashvili\RsWaybill\Exceptions\ActionPropertyIsNotSetException;
 
 abstract class BaseRequest extends Request
 {
-    /**
-     * RS WaybillService accepts Method::POST for every request
-     * @var Method
-     */
+    /** RS WaybillService accepts POST for every request */
     protected Method $method = Method::POST;
-    /**
-     * Define the SOAP action.
-     */
+
+    /** The SOAP action for this request — must be set on every concrete class */
     protected Action $action;
-    /**
-     * Dequest body params accepted in actual request constructor
-     * @var mixed
-     */
+
+    /** Request body params passed via the constructor */
     protected mixed $params;
-    /**
-     * Define Auth method for request
-     * @var AuthMethod
-     */
+
+    /** Authentication mode — defaults to SERVICE_USER for most requests */
     protected AuthMethod $authMethod = AuthMethod::SERVICE_USER;
-    /**
-     * It is "/" for every Request
-     * @return string
-     */
+
     public function resolveEndpoint(): string
     {
-        return "/";
+        return '/';
     }
-    /**
-     * Get the method of the request.
-     * @return \Mchekhashvili\RsWaybill\Enums\Action
-     */
+
     public function getAction(): Action
     {
         if (! isset($this->action)) {
-            throw new ActionPropertyIsNotSetException;
+            throw new ActionPropertyIsNotSetException();
         }
 
         return $this->action;
     }
-    /**
-     * Same for each request
-     * @return array{filter[active]: string, sort: string}
-     */
+
     protected function defaultQuery(): array
     {
-        return ["op" => $this->action->value];
+        return ['op' => $this->action->value];
     }
+
     public function getAuthMethod(): AuthMethod
     {
         return $this->authMethod;
     }
-    /**
-     * Generating string body using params
-     * @return string
-     */
+
     abstract public function createXmlBodyFromParams(): string;
-    /**
-     * Setting body authenticator purpose
-     * @return string
-     */
+
     abstract public function setAuthParams(array $params): void;
 }

@@ -15,13 +15,6 @@ class WaybillServiceConnector extends Connector implements HasBody
 {
     use HasXmlBody;
 
-    /**
-     * Summary of __construct
-     * @param string|null $service_username
-     * @param string|null $service_password
-     * @param string|null $tenant_username
-     * @param string|null $tenant_password
-     */
     public function __construct(
         public readonly string|null $service_username = null,
         public readonly string|null $service_password = null,
@@ -31,30 +24,28 @@ class WaybillServiceConnector extends Connector implements HasBody
 
     protected function defaultAuth(): WaybillServiceAuthenticator
     {
-        return new WaybillServiceAuthenticator($this->service_username, $this->service_password, $this->tenant_username, $this->tenant_password);
+        return new WaybillServiceAuthenticator(
+            $this->service_username,
+            $this->service_password,
+            $this->tenant_username,
+            $this->tenant_password
+        );
     }
 
     public function resolveBaseUrl(): string
     {
-        return "https://services.rs.ge/WayBillService/WayBillService.asmx?WSDL";
+        // The SOAP endpoint — not the ?WSDL URL
+        return 'https://services.rs.ge/WayBillService/WayBillService.asmx';
     }
 
-    /**
-     * Actions before sending the request
-     * 
-     * @return void
-     */
     public function boot(PendingRequest $pendingRequest): void
     {
-        /**
-         * @var BaseRequest $baseRequest
-         */
+        /** @var BaseRequest $baseRequest */
         $baseRequest = $pendingRequest->getRequest();
-        // set body
+
         $pendingRequest->body()->set($baseRequest->createXmlBodyFromParams());
-        // modify headers
-        $pendingRequest->headers()->add("Content-Type", "text/xml; charset=UTF-8");
-        $pendingRequest->headers()->add("SOAPAction", "http://tempuri.org/" . $baseRequest->getAction()->value);
-        $pendingRequest->headers()->add("Content-Length", strlen($pendingRequest->body()->all()));
+        $pendingRequest->headers()->add('Content-Type', 'text/xml; charset=UTF-8');
+        $pendingRequest->headers()->add('SOAPAction', 'http://tempuri.org/' . $baseRequest->getAction()->value);
+        $pendingRequest->headers()->add('Content-Length', strlen($pendingRequest->body()->all()));
     }
 }
