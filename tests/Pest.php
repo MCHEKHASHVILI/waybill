@@ -2,6 +2,20 @@
 
 /*
 |--------------------------------------------------------------------------
+| Load .env for local development
+|--------------------------------------------------------------------------
+| vlucas/phpdotenv loads the .env file from the project root into $_ENV
+| and getenv(). The file is optional so CI environments that inject vars
+| directly (GitHub Actions, etc.) will work without it.
+*/
+
+if (file_exists(dirname(__DIR__) . '/.env')) {
+    $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+    $dotenv->safeLoad();
+}
+
+/*
+|--------------------------------------------------------------------------
 | Test Case
 |--------------------------------------------------------------------------
 */
@@ -56,7 +70,7 @@ function getYesterday(): string
 
 /**
  * Returns true only when real credentials are available in the environment.
- * Integration tests should be skipped when they are not.
+ * Integration tests are skipped when they are not.
  */
 function hasCredentials(): bool
 {
