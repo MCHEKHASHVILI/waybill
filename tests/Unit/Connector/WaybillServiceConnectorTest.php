@@ -1,29 +1,45 @@
 <?php
 
+/**
+ * Integration tests for WaybillServiceConnector authentication behaviour.
+ *
+ * These tests require live RS credentials and make real HTTP calls.
+ * All tests are guarded with ->skip(!hasCredentials(), ...) so they are
+ * silently bypassed in CI and any environment without a .env file.
+ *
+ * NOTE: These are integration tests despite living under tests/Unit/.
+ * They will be relocated to tests/Integration/ in a future restructure.
+ */
+
 use Mchekhashvili\RsWaybill\Requests\CheckServiceUserRequest;
 use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
 
 describe('Connector with no credentials', function () {
 
-    test('does not authenticate service user when no credentials are given', function () {
+    test('RS API returns inactive when connector and request both have no credentials', function () {
+        // The authenticator still sends su/sp params but with null values,
+        // which the RS API treats as invalid — returning active: false.
         $connector = new WaybillServiceConnector();
         $request   = new CheckServiceUserRequest();
         $dto       = $connector->send($request)->dto();
 
         expect($dto)->toHaveProperty('active');
         expect($dto->active)->toBeFalse(
-            'Empty credentials unexpectedly returned an active service user'
+            'Null credentials unexpectedly returned an active service user'
         );
     })->skip(!hasCredentials(), 'RS_SERVICE_USERNAME / RS_SERVICE_PASSWORD not set in environment');
 
-    test('request-level credentials override missing connector credentials', function () {
+    test('request-level credentials take effect when connector has none', function () {
+        // Credentials passed directly to the request are merged over the
+        // connector-level null credentials, so the API call succeeds.
+        $creds     = getServiceUserCredentials();
         $connector = new WaybillServiceConnector();
-        $request   = new CheckServiceUserRequest(getServiceUserCredentials());
+        $request   = new CheckServiceUserRequest($creds);
         $dto       = $connector->send($request)->dto();
 
         expect($dto)->toHaveProperty('active');
         expect($dto->active)->toBeTrue(
-            'Request credentials did not override connector — or test user was deleted from eservices.rs.ge'
+            'Request credentials did not result in an active user — or test credentials were deleted from eservices.rs.ge'
         );
     })->skip(!hasCredentials(), 'RS_SERVICE_USERNAME / RS_SERVICE_PASSWORD not set in environment');
 
@@ -31,10 +47,13 @@ describe('Connector with no credentials', function () {
 
 describe('Connector with credentials', function () {
 
-    test('authenticates service user when connector is given credentials', function () {
-        $connector = new WaybillServiceConnector(...array_values(getServiceUserCredentials()));
-        $request   = new CheckServiceUserRequest();
-        $dto       = $connector->send($request)->dto();
+    test('connector-level credentials authenticate the service user', function () {
+        $creds     = getServiceUserCredentials();
+        $connector = new WaybillServiceConnector(
+            service_username: $creds['su'],
+            service_password: $creds['sp'],
+        );
+        $dto = $connector->send(new CheckServiceUserRequest())->dto();
 
         expect($dto)->toHaveProperty('active');
         expect($dto->active)->toBeTrue(
@@ -42,9 +61,16 @@ describe('Connector with credentials', function () {
         );
     })->skip(!hasCredentials(), 'RS_SERVICE_USERNAME / RS_SERVICE_PASSWORD not set in environment');
 
-    test('invalid request credentials override valid connector credentials', function () {
-        $connector = new WaybillServiceConnector(...array_values(getServiceUserCredentials()));
-        $request   = new CheckServiceUserRequest([
+    test('request-level invalid credentials override valid connector credentials', function () {
+        // setAuthParams() merges connector auth first, then request params on top.
+        // array_merge gives the latter array priority on duplicate keys,
+        // so the invalid su/sp from the request overwrite the valid connector ones.
+        $creds     = getServiceUserCredentials();
+        $connector = new WaybillServiceConnector(
+            service_username: $creds['su'],
+            service_password: $creds['sp'],
+        );
+        $request = new CheckServiceUserRequest([
             'su' => 'invalid_user',
             'sp' => 'invalid_password',
         ]);
