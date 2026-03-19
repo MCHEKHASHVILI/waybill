@@ -1,12 +1,16 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\BooleanDto;
+use Mchekhashvili\RsWaybill\Dtos\InBuilt\StringDto;
 use Mchekhashvili\RsWaybill\Requests\SendWaybillRequest;
 use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
 
-test("returned response is a " . BooleanDto::class, function () {
+/**
+ * SendWaybillRequest returns a StringDto containing the waybill number
+ * assigned by the RS API on successful activation.
+ */
+test('returned response is a ' . StringDto::class, function () {
     $data = [
-        "waybill_id" => "978941484"
+        'waybill_id' => '978941484',
     ];
 
     $response = (new WaybillServiceConnector(...array_values(getServiceUserCredentials())))
@@ -14,6 +18,7 @@ test("returned response is a " . BooleanDto::class, function () {
 
     $dto = $response->dto();
 
-    expect($dto)->toBeInstanceOf(BooleanDto::class);
-    expect($dto->result)->not->toBeTrue("could not send the waybill");
-});
+    expect($dto)->toBeInstanceOf(StringDto::class);
+    expect($dto)->toHaveProperty('value');
+    expect($dto->value)->toBeString();
+})->skip(!hasCredentials(), 'RS_SERVICE_USERNAME / RS_SERVICE_PASSWORD not set in environment');
