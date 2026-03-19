@@ -2,15 +2,22 @@
 
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
+use Mchekhashvili\RsWaybill\Enums\Action;
 use Mchekhashvili\RsWaybill\Enums\AuthMethod;
 use Mchekhashvili\RsWaybill\Requests\GetServerTimeRequest;
 use Mchekhashvili\RsWaybill\Requests\GetExciseCodesRequest;
 use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
 
+$serverTimeAction = Action::GET_SERVER_TIME->value; // 'get_server_time'
+
 $okXml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-  <soap:Body><GetServerTimeResponse xmlns="http://tempuri.org/"><GetServerTimeResult>2024-01-01T00:00:00</GetServerTimeResult></GetServerTimeResponse></soap:Body>
+  <soap:Body>
+    <{$serverTimeAction}Response xmlns="http://tempuri.org/">
+      <{$serverTimeAction}Result>2024-01-01T00:00:00</{$serverTimeAction}Result>
+    </{$serverTimeAction}Response>
+  </soap:Body>
 </soap:Envelope>
 XML;
 
@@ -63,7 +70,6 @@ describe('WaybillServiceConnector \u2014 authentication', function () use ($okXm
         $connector->withMockClient($mockClient);
 
         $request = new GetServerTimeRequest([]);
-        // GetServerTimeRequest uses GUEST auth
         expect($request->getAuthMethod())->toBe(AuthMethod::GUEST);
 
         $connector->send($request);

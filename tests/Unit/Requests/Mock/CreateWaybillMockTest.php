@@ -7,21 +7,24 @@ use Mchekhashvili\RsWaybill\Dtos\Static\WaybillCreatedDto;
 use Mchekhashvili\RsWaybill\Requests\CreateWaybillRequest;
 use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
 
-describe('CreateWaybillRequest — XML body', function () {
+// The SOAP action value for CreateWaybillRequest
+$action = Action::SAVE_WAYBILL->value; // 'save_waybill'
 
-    test('SOAP action is SaveWayBill', function () {
+describe('CreateWaybillRequest \u2014 XML body', function () use ($action) {
+
+    test('SOAP action enum is SAVE_WAYBILL', function () {
         $request = new CreateWaybillRequest([]);
         expect($request->getAction())->toBe(Action::SAVE_WAYBILL);
     });
 
-    test('XML body contains the SaveWayBill action element', function () {
+    test('XML body contains the save_waybill action element', function () use ($action) {
         $request = new CreateWaybillRequest([
             'su' => 'testuser',
             'sp' => 'testpass',
         ]);
         $xml = $request->createXmlBodyFromParams();
         expect($xml)
-            ->toContain('SaveWayBill')
+            ->toContain($action)            // <save_waybill ...>
             ->toContain('http://tempuri.org/');
     });
 
@@ -38,21 +41,23 @@ describe('CreateWaybillRequest — XML body', function () {
 
 });
 
-describe('CreateWaybillRequest — mocked response', function () {
+describe('CreateWaybillRequest \u2014 mocked response', function () use ($action) {
 
-    test('createDtoFromResponse returns a WaybillCreatedDto on success', function () {
+    test('createDtoFromResponse returns a WaybillCreatedDto on success', function () use ($action) {
+        // Mock XML uses the actual lowercase SOAP action values the RS API returns
         $mockXml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
-    <SaveWayBillResponse xmlns="http://tempuri.org/">
-      <SaveWayBillResult>
+    <{$action}Response xmlns="http://tempuri.org/">
+      <{$action}Result>
         <RESULT>
           <ID>99999</ID>
           <WAYBILL_NUMBER>WB-TEST-001</WAYBILL_NUMBER>
+          <STATUS>0</STATUS>
         </RESULT>
-      </SaveWayBillResult>
-    </SaveWayBillResponse>
+      </{$action}Result>
+    </{$action}Response>
   </soap:Body>
 </soap:Envelope>
 XML;
@@ -64,10 +69,11 @@ XML;
         $connector = new WaybillServiceConnector();
         $connector->withMockClient($mockClient);
 
-        $response = $connector->send(new CreateWaybillRequest([]));
+        $dto = $connector->send(new CreateWaybillRequest([]))->dto();
 
-        expect($response->status())->toBe(200);
-        expect($response->body())->toContain('WB-TEST-001');
+        expect($dto)->toBeInstanceOf(WaybillCreatedDto::class);
+        expect($dto->id)->toBe(99999);
+        expect($dto->number)->toBe('WB-TEST-001');
     });
 
     test('hasRequestFailed returns true when Server Error is present', function () {

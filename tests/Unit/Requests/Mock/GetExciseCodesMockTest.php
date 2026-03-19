@@ -8,54 +8,60 @@ use Mchekhashvili\RsWaybill\Dtos\Static\ExciseCodeDto;
 use Mchekhashvili\RsWaybill\Requests\GetExciseCodesRequest;
 use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
 
-describe('GetExciseCodesRequest — XML body', function () {
+// The SOAP action value for GetExciseCodesRequest
+$action = Action::GET_EXCISE_CODES->value; // 'get_akciz_codes'
 
-    test('SOAP action is GetExciseCodes', function () {
+describe('GetExciseCodesRequest \u2014 XML body', function () use ($action) {
+
+    test('SOAP action enum is GET_EXCISE_CODES', function () {
         $request = new GetExciseCodesRequest([]);
         expect($request->getAction())->toBe(Action::GET_EXCISE_CODES);
     });
 
-    test('XML body contains optional s_text filter when provided', function () {
+    test('XML body contains the get_akciz_codes action element', function () use ($action) {
         $request = new GetExciseCodesRequest(['s_text' => 'ვისკი']);
         $xml = $request->createXmlBodyFromParams();
-        expect($xml)->toContain('ვისკი');
+        expect($xml)
+            ->toContain($action)      // <get_akciz_codes ...>
+            ->toContain('ვისკი');
     });
 
-    test('XML body is valid even without parameters', function () {
+    test('XML body is valid even without parameters', function () use ($action) {
         $request = new GetExciseCodesRequest([]);
         $xml = $request->createXmlBodyFromParams();
         expect($xml)
             ->toBeString()
-            ->toContain('soap:Envelope');
+            ->toContain('soap:Envelope')
+            ->toContain($action);
     });
 
 });
 
-describe('GetExciseCodesRequest — mocked response', function () {
+describe('GetExciseCodesRequest \u2014 mocked response', function () use ($action) {
 
-    test('dto is an ArrayDto of ExciseCodeDto instances', function () {
+    test('dto is an ArrayDto containing ExciseCodeDto instances', function () use ($action) {
         $mockXml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
-    <GetExciseCodesResponse xmlns="http://tempuri.org/">
-      <GetExciseCodesResult>
-        <EXCISE_CODES>
-          <EXCISE_CODE>
+    <{$action}Response xmlns="http://tempuri.org/">
+      <{$action}Result>
+        <AKCIZ_CODES>
+          <AKCIZ_CODE>
             <ID>1</ID>
-            <NAME>ვისკი</NAME>
-            <CODE>EX001</CODE>
-            <EXCISE_RATE>10</EXCISE_RATE>
-          </EXCISE_CODE>
-          <EXCISE_CODE>
+            <TITLE>ვისკი</TITLE>
+            <SAKON_KODI>123</SAKON_KODI>
+            <AKCIS_GANAKV>10.5</AKCIS_GANAKV>
+          </AKCIZ_CODE>
+          <AKCIZ_CODE>
             <ID>2</ID>
-            <NAME>ლუდი</NAME>
-            <CODE>EX002</CODE>
-            <EXCISE_RATE>5</EXCISE_RATE>
-          </EXCISE_CODE>
-        </EXCISE_CODES>
-      </GetExciseCodesResult>
-    </GetExciseCodesResponse>
+            <TITLE>ლუდი</TITLE>
+            <SAKON_KODI>456</SAKON_KODI>
+            <AKCIS_GANAKV>5.0</AKCIS_GANAKV>
+          </AKCIZ_CODE>
+        </AKCIZ_CODES>
+      </{$action}Result>
+    </{$action}Response>
   </soap:Body>
 </soap:Envelope>
 XML;
@@ -70,7 +76,10 @@ XML;
         $dto = $connector->send(new GetExciseCodesRequest([]))->dto();
 
         expect($dto)->toBeInstanceOf(ArrayDto::class);
-        expect($dto)->toHaveProperty('data');
+        expect($dto->data)->toHaveCount(2);
+        expect($dto->data[0])->toBeInstanceOf(ExciseCodeDto::class);
+        expect($dto->data[0]->name)->toBe('ვისკი');
+        expect($dto->data[1]->name)->toBe('ლუდი');
     });
 
 });

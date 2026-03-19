@@ -3,43 +3,47 @@
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
 use Mchekhashvili\RsWaybill\Enums\Action;
+use Mchekhashvili\RsWaybill\Dtos\Static\WaybillDto;
 use Mchekhashvili\RsWaybill\Requests\GetWaybillRequest;
 use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
 
-describe('GetWaybillRequest — XML body', function () {
+// The SOAP action value for GetWaybillRequest
+$action = Action::GET_WAYBILL->value; // 'get_waybill'
 
-    test('SOAP action is GetWayBill', function () {
+describe('GetWaybillRequest \u2014 XML body', function () use ($action) {
+
+    test('SOAP action enum is GET_WAYBILL', function () {
         $request = new GetWaybillRequest([]);
         expect($request->getAction())->toBe(Action::GET_WAYBILL);
     });
 
-    test('XML body contains the GetWayBill action element', function () {
+    test('XML body contains the get_waybill action element', function () use ($action) {
         $request = new GetWaybillRequest(['id' => '12345']);
         $xml = $request->createXmlBodyFromParams();
         expect($xml)
-            ->toContain('GetWayBill')
+            ->toContain($action)   // <get_waybill ...>
             ->toContain('12345');
     });
 
 });
 
-describe('GetWaybillRequest — mocked response', function () {
+describe('GetWaybillRequest \u2014 mocked response', function () use ($action) {
 
-    test('returns 200 and XML body with waybill data', function () {
+    test('createDtoFromResponse returns a WaybillDto on success', function () use ($action) {
         $mockXml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
-    <GetWayBillResponse xmlns="http://tempuri.org/">
-      <GetWayBillResult>
+    <{$action}Response xmlns="http://tempuri.org/">
+      <{$action}Result>
         <WAYBILL>
           <ID>12345</ID>
           <WAYBILL_NUMBER>WB-MOCK-001</WAYBILL_NUMBER>
           <STATUS>1</STATUS>
           <TYPE>2</TYPE>
         </WAYBILL>
-      </GetWayBillResult>
-    </GetWayBillResponse>
+      </{$action}Result>
+    </{$action}Response>
   </soap:Body>
 </soap:Envelope>
 XML;
@@ -51,10 +55,11 @@ XML;
         $connector = new WaybillServiceConnector();
         $connector->withMockClient($mockClient);
 
-        $response = $connector->send(new GetWaybillRequest(['id' => '12345']));
+        $dto = $connector->send(new GetWaybillRequest(['id' => '12345']))->dto();
 
-        expect($response->status())->toBe(200);
-        expect($response->body())->toContain('WB-MOCK-001');
+        expect($dto)->toBeInstanceOf(WaybillDto::class);
+        expect($dto->id)->toBe(12345);
+        expect($dto->number)->toBe('WB-MOCK-001');
     });
 
 });
