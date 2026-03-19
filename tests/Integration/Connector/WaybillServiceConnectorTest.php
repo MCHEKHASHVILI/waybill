@@ -6,20 +6,27 @@
  * These tests require live RS credentials and make real HTTP calls.
  * All tests are guarded with ->skip(!hasCredentials(), ...) so they are
  * silently bypassed in CI and any environment without a .env file.
+ *
+ * Important: The RS API does NOT return a proper SOAP fault for invalid/missing
+ * credentials. It returns an HTML error page instead. CheckServiceUserRequest
+ * handles this gracefully in hasRequestFailed() and createDtoFromResponse(),
+ * returning active: false safely without crashing the XML parser.
  */
 
 use Mchekhashvili\RsWaybill\Requests\CheckServiceUserRequest;
 use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\RsWaybill\Dtos\Static\CheckServiceUserDto;
 
 describe('Connector with no credentials', function () {
 
-    test('RS API returns inactive when connector and request both have no credentials', function () {
-        // The authenticator still sends su/sp params but with null values,
-        // which the RS API treats as invalid — returning active: false.
+    test('returns inactive DTO when connector and request both have no credentials', function () {
+        // RS server returns an HTML error page for null credentials.
+        // CheckServiceUserRequest catches this and returns active: false safely.
         $connector = new WaybillServiceConnector();
         $request   = new CheckServiceUserRequest();
         $dto       = $connector->send($request)->dto();
 
+        expect($dto)->toBeInstanceOf(CheckServiceUserDto::class);
         expect($dto)->toHaveProperty('active');
         expect($dto->active)->toBeFalse(
             'Null credentials unexpectedly returned an active service user'
@@ -34,6 +41,7 @@ describe('Connector with no credentials', function () {
         $request   = new CheckServiceUserRequest($creds);
         $dto       = $connector->send($request)->dto();
 
+        expect($dto)->toBeInstanceOf(CheckServiceUserDto::class);
         expect($dto)->toHaveProperty('active');
         expect($dto->active)->toBeTrue(
             'Request credentials did not result in an active user — or test credentials were deleted from eservices.rs.ge'
@@ -52,6 +60,7 @@ describe('Connector with credentials', function () {
         );
         $dto = $connector->send(new CheckServiceUserRequest())->dto();
 
+        expect($dto)->toBeInstanceOf(CheckServiceUserDto::class);
         expect($dto)->toHaveProperty('active');
         expect($dto->active)->toBeTrue(
             'Connector credentials returned inactive — service user may be deleted from eservices.rs.ge'
@@ -62,6 +71,8 @@ describe('Connector with credentials', function () {
         // setAuthParams() merges connector auth first, then request params on top.
         // array_merge gives the latter array priority on duplicate keys,
         // so the invalid su/sp from the request overwrite the valid connector ones.
+        // The RS server returns an HTML error page for invalid credentials,
+        // which CheckServiceUserRequest handles gracefully as active: false.
         $creds     = getServiceUserCredentials();
         $connector = new WaybillServiceConnector(
             service_username: $creds['su'],
@@ -73,6 +84,7 @@ describe('Connector with credentials', function () {
         ]);
         $dto = $connector->send($request)->dto();
 
+        expect($dto)->toBeInstanceOf(CheckServiceUserDto::class);
         expect($dto)->toHaveProperty('active');
         expect($dto->active)->toBeFalse(
             'Request-level invalid credentials did not override valid connector credentials'
