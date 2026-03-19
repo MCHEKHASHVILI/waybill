@@ -31,8 +31,8 @@
     },
     "scripts": {
         "pest": "./vendor/bin/pest",
-        "pest:unit": "./vendor/bin/pest tests/Unit/Requests/Mock",
-        "pest:integration": "./vendor/bin/pest tests/Unit/Requests --filter='^(?!.*Mock)'"
+        "pest:unit": "./vendor/bin/pest tests/Unit/Requests/Mock tests/Unit/Dtos --ci",
+        "pest:integration": "./vendor/bin/pest tests/Unit/Requests tests/Integration"
     },
     "config": {
         "allow-plugins": {
