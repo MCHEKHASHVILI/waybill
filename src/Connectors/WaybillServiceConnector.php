@@ -34,7 +34,8 @@ class WaybillServiceConnector extends Connector implements HasBody
 
     public function resolveBaseUrl(): string
     {
-        // The SOAP endpoint — not the ?WSDL URL
+        // The RS server requires the ?WSDL suffix to correctly route SOAP POST requests.
+        // Using the bare .asmx URL causes the server to return an HTML error page.
         return 'https://services.rs.ge/WayBillService/WayBillService.asmx?WSDL';
     }
 
