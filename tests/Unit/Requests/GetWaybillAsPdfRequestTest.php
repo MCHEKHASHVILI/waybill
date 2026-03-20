@@ -1,8 +1,8 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\StringDto;
-use Mchekhashvili\RsWaybill\Requests\GetWaybillAsPdfRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\StringDto;
+use Mchekhashvili\Rs\Waybill\Requests\GetWaybillAsPdfRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 test("Returns " . StringDto::class . " with property base64_string", function () {
     $response = (new WaybillServiceConnector())->send(new GetWaybillAsPdfRequest(array_merge([

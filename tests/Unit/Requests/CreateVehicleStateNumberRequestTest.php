@@ -1,8 +1,8 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\BooleanDto;
-use Mchekhashvili\RsWaybill\Requests\CreateVehicleStateNumberRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\BooleanDto;
+use Mchekhashvili\Rs\Waybill\Requests\CreateVehicleStateNumberRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 test("returned response is a " . BooleanDto::class, function () {
     $data =  [

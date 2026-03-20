@@ -1,8 +1,8 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\StringDto;
-use Mchekhashvili\RsWaybill\Requests\SendWaybillRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\StringDto;
+use Mchekhashvili\Rs\Waybill\Requests\SendWaybillRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 /**
  * SendWaybillRequest returns a StringDto containing the waybill number

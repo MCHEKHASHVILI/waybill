@@ -1,8 +1,8 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\Static\WaybillCreatedDto;
-use Mchekhashvili\RsWaybill\Requests\CreateWaybillTemplateRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillCreatedDto;
+use Mchekhashvili\Rs\Waybill\Requests\CreateWaybillTemplateRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 test("This function does not work and returns error 500 from server", function () {
     $data = [

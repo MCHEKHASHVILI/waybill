@@ -1,9 +1,9 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\ArrayDto;
-use Mchekhashvili\RsWaybill\Dtos\Static\ExciseCodeDto;
-use Mchekhashvili\RsWaybill\Requests\GetExciseCodesRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\ArrayDto;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\ExciseCodeDto;
+use Mchekhashvili\Rs\Waybill\Requests\GetExciseCodesRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 test("returned response is an array of " . ExciseCodeDto::class, function () {
     $dto = (new WaybillServiceConnector())

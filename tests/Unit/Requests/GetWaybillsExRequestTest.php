@@ -1,9 +1,9 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\ArrayDto;
-use Mchekhashvili\RsWaybill\Dtos\Static\WaybillDto;
-use Mchekhashvili\RsWaybill\Requests\GetWaybillsExRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\ArrayDto;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillDto;
+use Mchekhashvili\Rs\Waybill\Requests\GetWaybillsExRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 test("returned response is an array of " . WaybillDto::class, function () {
     $response = (new WaybillServiceConnector())->send(new GetWaybillsExRequest(getServiceUserCredentials()));

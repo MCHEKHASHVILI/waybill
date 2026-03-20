@@ -1,9 +1,9 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\ArrayDto;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
-use Mchekhashvili\RsWaybill\Dtos\Static\VehicleDto;
-use Mchekhashvili\RsWaybill\Requests\GetVehicleStateNumbersRequest;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\ArrayDto;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\VehicleDto;
+use Mchekhashvili\Rs\Waybill\Requests\GetVehicleStateNumbersRequest;
 
 test("returned response is an array of " . VehicleDto::class, function () {
     $dto = (new WaybillServiceConnector())->send(new GetVehicleStateNumbersRequest(getServiceUserCredentials()))->dto();

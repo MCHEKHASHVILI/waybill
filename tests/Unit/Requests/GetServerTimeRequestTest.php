@@ -1,8 +1,8 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\DateTimeDto;
-use Mchekhashvili\RsWaybill\Requests\GetServerTimeRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\DateTimeDto;
+use Mchekhashvili\Rs\Waybill\Requests\GetServerTimeRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 test("Returns " . DateTimeDto::class . " with property value which is DatetimeImmutable type", function () {
     $dto = (new WaybillServiceConnector())->send(new GetServerTimeRequest())->dto();

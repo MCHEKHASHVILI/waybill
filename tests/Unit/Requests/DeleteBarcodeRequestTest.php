@@ -1,8 +1,8 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\BooleanDto;
-use Mchekhashvili\RsWaybill\Requests\DeleteBarcodeRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\BooleanDto;
+use Mchekhashvili\Rs\Waybill\Requests\DeleteBarcodeRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 test("returned response is an array of " . BooleanDto::class, function () {
     $data =  [

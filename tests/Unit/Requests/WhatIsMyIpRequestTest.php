@@ -1,8 +1,8 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\StringDto;
-use Mchekhashvili\RsWaybill\Requests\WhatIsMyIpRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\StringDto;
+use Mchekhashvili\Rs\Waybill\Requests\WhatIsMyIpRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 test("Returns " . StringDto::class . " with property (string) {value} which contains valid ip address", function () {
     $dto = (new WaybillServiceConnector())->send(new WhatIsMyIpRequest())->dto();

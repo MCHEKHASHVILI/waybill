@@ -1,8 +1,8 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\Static\WaybillDto;
-use Mchekhashvili\RsWaybill\Requests\GetWaybillByNumberRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillDto;
+use Mchekhashvili\Rs\Waybill\Requests\GetWaybillByNumberRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 test("returned response is an " . WaybillDto::class, function () {
     $response = (new WaybillServiceConnector())->send(new GetWaybillByNumberRequest(array_merge([

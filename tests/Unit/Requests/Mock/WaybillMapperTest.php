@@ -1,12 +1,12 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Mappers\WaybillMapper;
-use Mchekhashvili\RsWaybill\Mappers\ProductMapper;
-use Mchekhashvili\RsWaybill\Dtos\Static\WaybillDto;
-use Mchekhashvili\RsWaybill\Dtos\Static\ProductDto;
-use Mchekhashvili\RsWaybill\Enums\WaybillStatus;
-use Mchekhashvili\RsWaybill\Enums\WaybillCategory;
-use Mchekhashvili\RsWaybill\Enums\DeliveryCostPayer;
+use Mchekhashvili\Rs\Waybill\Mappers\WaybillMapper;
+use Mchekhashvili\Rs\Waybill\Mappers\ProductMapper;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillDto;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\ProductDto;
+use Mchekhashvili\Rs\Waybill\Enums\WaybillStatus;
+use Mchekhashvili\Rs\Waybill\Enums\WaybillCategory;
+use Mchekhashvili\Rs\Waybill\Enums\DeliveryCostPayer;
 
 describe('WaybillMapper::fromXmlArray', function () {
 

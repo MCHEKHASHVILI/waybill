@@ -1,8 +1,8 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\BooleanDto;
-use Mchekhashvili\RsWaybill\Requests\CreateBarcodeRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\BooleanDto;
+use Mchekhashvili\Rs\Waybill\Requests\CreateBarcodeRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 test('returned response is a ' . BooleanDto::class, function () {
     $data = [

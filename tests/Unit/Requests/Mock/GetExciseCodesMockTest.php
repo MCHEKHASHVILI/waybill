@@ -2,11 +2,11 @@
 
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
-use Mchekhashvili\RsWaybill\Enums\Action;
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\ArrayDto;
-use Mchekhashvili\RsWaybill\Dtos\Static\ExciseCodeDto;
-use Mchekhashvili\RsWaybill\Requests\GetExciseCodesRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Enums\Action;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\ArrayDto;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\ExciseCodeDto;
+use Mchekhashvili\Rs\Waybill\Requests\GetExciseCodesRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 // The SOAP action value for GetExciseCodesRequest
 $action = Action::GET_EXCISE_CODES->value; // 'get_akciz_codes'

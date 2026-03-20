@@ -1,7 +1,7 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Requests\GetCWaybillRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Requests\GetCWaybillRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 test("This request does not work on rs side, returns request timeout", function () {
     // $response = (new WaybillServiceConnector())->send(new GetCWaybillRequest(array_merge([

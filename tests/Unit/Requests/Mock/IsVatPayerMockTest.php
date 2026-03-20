@@ -2,11 +2,11 @@
 
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
-use Mchekhashvili\RsWaybill\Enums\Action;
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\BooleanDto;
-use Mchekhashvili\RsWaybill\Requests\IsVatPayerRequest;
-use Mchekhashvili\RsWaybill\Requests\IsVatPayerTinRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Enums\Action;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\BooleanDto;
+use Mchekhashvili\Rs\Waybill\Requests\IsVatPayerRequest;
+use Mchekhashvili\Rs\Waybill\Requests\IsVatPayerTinRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 // The SOAP action values from the Action enum
 $isVatPayerAction    = Action::IS_VAT_PAYER->value;     // 'is_vat_payer'

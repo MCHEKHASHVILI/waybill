@@ -1,8 +1,8 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\BooleanDto;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
-use Mchekhashvili\RsWaybill\Requests\ConfirmWaybillRequest;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\BooleanDto;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Requests\ConfirmWaybillRequest;
 
 test('returns a ' . BooleanDto::class, function () {
     $creds = getServiceUserCredentials();

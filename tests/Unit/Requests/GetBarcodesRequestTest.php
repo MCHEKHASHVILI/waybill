@@ -1,9 +1,9 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\ArrayDto;
-use Mchekhashvili\RsWaybill\Requests\GetBarcodesRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
-use Mchekhashvili\RsWaybill\Dtos\Static\BarcodeDto;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\ArrayDto;
+use Mchekhashvili\Rs\Waybill\Requests\GetBarcodesRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\BarcodeDto;
 
 test("returned response is an array of " . BarcodeDto::class, function () {
     $response = (new WaybillServiceConnector())

@@ -1,8 +1,8 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Mappers\WaybillMapper;
-use Mchekhashvili\RsWaybill\Dtos\Static\WaybillDto;
-use Mchekhashvili\RsWaybill\Enums\WaybillStatus;
+use Mchekhashvili\Rs\Waybill\Mappers\WaybillMapper;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillDto;
+use Mchekhashvili\Rs\Waybill\Enums\WaybillStatus;
 
 /**
  * WaybillDto is a pure readonly value object with no logic of its own.

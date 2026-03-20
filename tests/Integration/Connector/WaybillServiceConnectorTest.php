@@ -13,11 +13,11 @@
  * silently bypassed in CI and any environment without a .env file.
  */
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\ArrayDto;
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\DateTimeDto;
-use Mchekhashvili\RsWaybill\Requests\GetServerTimeRequest;
-use Mchekhashvili\RsWaybill\Requests\GetExciseCodesRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\ArrayDto;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\DateTimeDto;
+use Mchekhashvili\Rs\Waybill\Requests\GetServerTimeRequest;
+use Mchekhashvili\Rs\Waybill\Requests\GetExciseCodesRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 describe('Connector — GUEST endpoint (no credentials required)', function () {
 

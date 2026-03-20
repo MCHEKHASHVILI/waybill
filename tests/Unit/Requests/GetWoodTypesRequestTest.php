@@ -1,9 +1,9 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\ArrayDto;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
-use Mchekhashvili\RsWaybill\Dtos\Static\WoodTypeDto;
-use Mchekhashvili\RsWaybill\Requests\GetWoodTypesRequest;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\ArrayDto;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WoodTypeDto;
+use Mchekhashvili\Rs\Waybill\Requests\GetWoodTypesRequest;
 
 test("returned response is an array of " . WoodTypeDto::class, function () {
     $dto = (new WaybillServiceConnector())->send(new GetWoodTypesRequest(getServiceUserCredentials()))->dto();

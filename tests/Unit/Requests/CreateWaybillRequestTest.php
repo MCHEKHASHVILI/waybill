@@ -1,8 +1,8 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\Static\WaybillCreatedDto;
-use Mchekhashvili\RsWaybill\Requests\CreateWaybillRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillCreatedDto;
+use Mchekhashvili\Rs\Waybill\Requests\CreateWaybillRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 test("returned response is an array of " . WaybillCreatedDto::class, function () {
     $data = [

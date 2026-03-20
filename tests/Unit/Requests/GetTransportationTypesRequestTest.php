@@ -1,9 +1,9 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\ArrayDto;
-use Mchekhashvili\RsWaybill\Dtos\Static\TransportationTypeDto;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
-use Mchekhashvili\RsWaybill\Requests\GetTransportationTypesRequest;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\ArrayDto;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\TransportationTypeDto;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Requests\GetTransportationTypesRequest;
 
 test("returned response is an array of " . TransportationTypeDto::class, function () {
     $dto = (new WaybillServiceConnector())->send(new GetTransportationTypesRequest(getServiceUserCredentials()))->dto();

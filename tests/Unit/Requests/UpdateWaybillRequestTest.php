@@ -1,8 +1,8 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\Static\WaybillCreatedDto;
-use Mchekhashvili\RsWaybill\Requests\UpdateWaybillRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillCreatedDto;
+use Mchekhashvili\Rs\Waybill\Requests\UpdateWaybillRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 /**
  * UpdateWaybillRequest returns a WaybillCreatedDto.

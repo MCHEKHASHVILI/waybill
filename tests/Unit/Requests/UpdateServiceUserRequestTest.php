@@ -1,9 +1,9 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\BooleanDto;
-use Mchekhashvili\RsWaybill\Requests\CheckServiceUserRequest;
-use Mchekhashvili\RsWaybill\Requests\UpdateServiceUserRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\BooleanDto;
+use Mchekhashvili\Rs\Waybill\Requests\CheckServiceUserRequest;
+use Mchekhashvili\Rs\Waybill\Requests\UpdateServiceUserRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 test("Returns boolean, can update password, note, and ip address, keywords: sp", function () {
     $connector = new WaybillServiceConnector(

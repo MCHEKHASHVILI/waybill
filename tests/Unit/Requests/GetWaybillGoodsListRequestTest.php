@@ -1,9 +1,9 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\ArrayDto;
-use Mchekhashvili\RsWaybill\Dtos\Static\WaybillProductDto;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
-use Mchekhashvili\RsWaybill\Requests\GetWaybillGoodsListRequest;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\ArrayDto;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillProductDto;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Requests\GetWaybillGoodsListRequest;
 
 test("returned response is an array of " . WaybillProductDto::class, function () {
     $response = (new WaybillServiceConnector())->send(new GetWaybillGoodsListRequest(array_merge(

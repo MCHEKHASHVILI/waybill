@@ -1,8 +1,8 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\Static\CheckServiceUserDto;
-use Mchekhashvili\RsWaybill\Requests\CheckServiceUserRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\CheckServiceUserDto;
+use Mchekhashvili\Rs\Waybill\Requests\CheckServiceUserRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 test("Check Service User request returns proper Dto", function () {
     expect((new WaybillServiceConnector())

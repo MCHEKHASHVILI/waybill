@@ -2,10 +2,10 @@
 
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
-use Mchekhashvili\RsWaybill\Enums\Action;
-use Mchekhashvili\RsWaybill\Dtos\Static\WaybillCreatedDto;
-use Mchekhashvili\RsWaybill\Requests\CreateWaybillRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Enums\Action;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillCreatedDto;
+use Mchekhashvili\Rs\Waybill\Requests\CreateWaybillRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 // The SOAP action value for CreateWaybillRequest
 $action = Action::SAVE_WAYBILL->value; // 'save_waybill'

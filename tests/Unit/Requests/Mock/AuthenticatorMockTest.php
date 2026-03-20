@@ -2,11 +2,11 @@
 
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
-use Mchekhashvili\RsWaybill\Enums\Action;
-use Mchekhashvili\RsWaybill\Enums\AuthMethod;
-use Mchekhashvili\RsWaybill\Requests\GetServerTimeRequest;
-use Mchekhashvili\RsWaybill\Requests\GetExciseCodesRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Enums\Action;
+use Mchekhashvili\Rs\Waybill\Enums\AuthMethod;
+use Mchekhashvili\Rs\Waybill\Requests\GetServerTimeRequest;
+use Mchekhashvili\Rs\Waybill\Requests\GetExciseCodesRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 $serverTimeAction = Action::GET_SERVER_TIME->value; // 'get_server_time'
 

@@ -1,9 +1,9 @@
 <?php
 
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\BooleanDto;
-use Mchekhashvili\RsWaybill\Requests\IsVatPayerRequest;
-use Mchekhashvili\RsWaybill\Requests\IsVatPayerTinRequest;
-use Mchekhashvili\RsWaybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\BooleanDto;
+use Mchekhashvili\Rs\Waybill\Requests\IsVatPayerRequest;
+use Mchekhashvili\Rs\Waybill\Requests\IsVatPayerTinRequest;
+use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 
 describe("invalid inputs", function () {
