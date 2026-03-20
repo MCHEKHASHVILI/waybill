@@ -11,7 +11,7 @@ use Mchekhashvili\Rs\Waybill\Traits\Requests\HasParams;
 use Mchekhashvili\Rs\Waybill\Interfaces\Requests\HasParamsInterface;
 
 /**
- * Sends (activates) a saved waybill.
+ * Activates a saved waybill.
  * On success the RS API returns the assigned waybill number as a string.
  */
 class SendWaybillRequest extends BaseRequest implements HasParamsInterface
@@ -29,10 +29,5 @@ class SendWaybillRequest extends BaseRequest implements HasParamsInterface
             $response->xmlReader()->element("{$this->action->value}Response")->sole()->getContent()
         );
         return new StringDto(value: (string) ($data["{$this->action->value}Result"] ?? ''));
-    }
-
-    public function hasRequestFailed(Response $response): ?bool
-    {
-        return str_contains($response->body(), 'Server Error');
     }
 }

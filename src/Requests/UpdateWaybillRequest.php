@@ -26,9 +26,4 @@ class UpdateWaybillRequest extends BaseRequest implements HasParamsInterface
             number: (string) ($data['WAYBILL_NUMBER'] ?? ''),
         );
     }
-
-    public function hasRequestFailed(Response $response): ?bool
-    {
-        return str_contains($response->body(), 'Server Error');
-    }
 }

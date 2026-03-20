@@ -26,9 +26,4 @@ class CreateWaybillTemplateRequest extends BaseRequest implements HasParamsInter
             number: (string) ($data['WAYBILL_NUMBER'] ?? ''),
         );
     }
-
-    public function hasRequestFailed(Response $response): ?bool
-    {
-        return str_contains($response->body(), 'Server Error');
-    }
 }
