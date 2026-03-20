@@ -12,7 +12,6 @@ use Saloon\Traits\Body\HasXmlBody;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Mchekhashvili\Rs\Waybill\Authenticators\WaybillServiceAuthenticator;
 use Mchekhashvili\Rs\Waybill\Exceptions\WaybillConnectionException;
-use Mchekhashvili\Rs\Waybill\Exceptions\WaybillServerException;
 use Mchekhashvili\Rs\Waybill\Requests\BaseRequest;
 
 class WaybillServiceConnector extends Connector implements HasBody
@@ -38,9 +37,11 @@ class WaybillServiceConnector extends Connector implements HasBody
 
     public function resolveBaseUrl(): string
     {
-        // The RS server requires the ?WSDL suffix to correctly route SOAP POST requests.
-        // Using the bare .asmx URL causes the server to return an HTML error page.
-        return 'https://services.rs.ge/WayBillService/WayBillService.asmx?WSDL';
+        // Plain .asmx endpoint — correct target for SOAP POST requests.
+        // The ?WSDL suffix is for WSDL document retrieval only and must
+        // NOT be used here: Saloon appends query params after it, producing
+        // malformed URLs like ?WSDL= or ?WSDL%2F= that cause timeouts.
+        return 'https://services.rs.ge/WayBillService/WayBillService.asmx';
     }
 
     public function boot(PendingRequest $pendingRequest): void

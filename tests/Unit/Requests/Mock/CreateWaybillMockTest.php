@@ -6,6 +6,7 @@ use Mchekhashvili\Rs\Waybill\Enums\Action;
 use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillCreatedDto;
 use Mchekhashvili\Rs\Waybill\Requests\CreateWaybillRequest;
 use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
+use Mchekhashvili\Rs\Waybill\Exceptions\WaybillServerException;
 
 // The SOAP action value for CreateWaybillRequest
 $action = Action::SAVE_WAYBILL->value; // 'save_waybill'
@@ -24,7 +25,7 @@ describe('CreateWaybillRequest \u2014 XML body', function () use ($action) {
         ]);
         $xml = $request->createXmlBodyFromParams();
         expect($xml)
-            ->toContain($action)            // <save_waybill ...>
+            ->toContain($action)
             ->toContain('http://tempuri.org/');
     });
 
@@ -44,18 +45,17 @@ describe('CreateWaybillRequest \u2014 XML body', function () use ($action) {
 describe('CreateWaybillRequest \u2014 mocked response', function () use ($action) {
 
     test('createDtoFromResponse returns a WaybillCreatedDto on success', function () use ($action) {
-        // Mock XML uses the actual lowercase SOAP action values the RS API returns
         $mockXml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
     <{$action}Response xmlns="http://tempuri.org/">
       <{$action}Result>
-        <RESULT>
+        <r>
           <ID>99999</ID>
           <WAYBILL_NUMBER>WB-TEST-001</WAYBILL_NUMBER>
           <STATUS>0</STATUS>
-        </RESULT>
+        </r>
       </{$action}Result>
     </{$action}Response>
   </soap:Body>
@@ -76,7 +76,9 @@ XML;
         expect($dto->number)->toBe('WB-TEST-001');
     });
 
-    test('hasRequestFailed returns true when Server Error is present', function () {
+    test('hasRequestFailed throws WaybillServerException when Server Error is present', function () {
+        // BaseRequest::hasRequestFailed() now throws WaybillServerException
+        // instead of returning true, so the exception surfaces here.
         $errorXml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -96,10 +98,8 @@ XML;
         $connector = new WaybillServiceConnector();
         $connector->withMockClient($mockClient);
 
-        $request  = new CreateWaybillRequest([]);
-        $response = $connector->send($request);
-
-        expect($request->hasRequestFailed($response))->toBeTrue();
+        expect(fn() => $connector->send(new CreateWaybillRequest([])))
+            ->toThrow(WaybillServerException::class);
     });
 
 });
