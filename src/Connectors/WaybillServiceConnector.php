@@ -35,7 +35,7 @@ class WaybillServiceConnector extends Connector implements HasBody
     public function resolveBaseUrl(): string
     {
         // The SOAP endpoint — not the ?WSDL URL
-        return 'https://services.rs.ge/WayBillService/WayBillService.asmx';
+        return 'https://services.rs.ge/WayBillService/WayBillService.asmx?WSDL';
     }
 
     public function boot(PendingRequest $pendingRequest): void
