@@ -17,7 +17,7 @@ abstract class BaseRequest extends Request
     protected mixed      $params;
     protected AuthMethod $authMethod = AuthMethod::SERVICE_USER;
 
-    public function resolveEndpoint(): string { return '/'; }
+    public function resolveEndpoint(): string { return ''; }
 
     public function getAction(): Action
     {
@@ -26,8 +26,6 @@ abstract class BaseRequest extends Request
         }
         return $this->action;
     }
-
-    protected function defaultQuery(): array { return ['op' => $this->action->value]; }
 
     public function getAuthMethod(): AuthMethod { return $this->authMethod; }
 
