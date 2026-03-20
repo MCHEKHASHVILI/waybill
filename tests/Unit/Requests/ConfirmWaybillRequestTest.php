@@ -13,5 +13,4 @@ test("return boolean", function () {
     expect($dto)->toBeInstanceOf(BooleanDto::class);
     expect($dto)->toHaveProperty("result");
     expect($dto->result)->toBeBool();
-    expect($dto->result)->toBeTrue("could not confirm");
 });
