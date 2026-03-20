@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Mchekhashvili\RsWaybill\Requests;
+namespace Mchekhashvili\Rs\Waybill\Requests;
 
 use Saloon\Http\Response;
-use Mchekhashvili\RsWaybill\Enums\Action;
-use Mchekhashvili\RsWaybill\Enums\AuthMethod;
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\ArrayDto;
-use Mchekhashvili\RsWaybill\Mappers\ServiceUserMapper;
-use Mchekhashvili\RsWaybill\Traits\Requests\HasParams;
-use Mchekhashvili\RsWaybill\Interfaces\Requests\HasParamsInterface;
+use Mchekhashvili\Rs\Waybill\Enums\Action;
+use Mchekhashvili\Rs\Waybill\Enums\AuthMethod;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\ArrayDto;
+use Mchekhashvili\Rs\Waybill\Mappers\ServiceUserMapper;
+use Mchekhashvili\Rs\Waybill\Traits\Requests\HasParams;
+use Mchekhashvili\Rs\Waybill\Interfaces\Requests\HasParamsInterface;
 
 class GetServiceUsersRequest extends BaseRequest implements HasParamsInterface
 {

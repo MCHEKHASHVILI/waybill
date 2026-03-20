@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Mchekhashvili\RsWaybill\Requests;
+namespace Mchekhashvili\Rs\Waybill\Requests;
 
 use Saloon\Http\Response;
-use Mchekhashvili\RsWaybill\Enums\Action;
-use Mchekhashvili\RsWaybill\Dtos\Static\WaybillCreatedDto;
-use Mchekhashvili\RsWaybill\Traits\Requests\HasParams;
-use Mchekhashvili\RsWaybill\Interfaces\Requests\HasParamsInterface;
+use Mchekhashvili\Rs\Waybill\Enums\Action;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillCreatedDto;
+use Mchekhashvili\Rs\Waybill\Traits\Requests\HasParams;
+use Mchekhashvili\Rs\Waybill\Interfaces\Requests\HasParamsInterface;
 
 class UpdateWaybillRequest extends BaseRequest implements HasParamsInterface
 {
@@ -21,7 +21,6 @@ class UpdateWaybillRequest extends BaseRequest implements HasParamsInterface
     public function createDtoFromResponse(Response $response): WaybillCreatedDto
     {
         $data = $response->xmlReader()->xpathValue('//RESULT')->sole();
-
         return new WaybillCreatedDto(
             id:     (int)    ($data['ID']             ?? 0),
             number: (string) ($data['WAYBILL_NUMBER'] ?? ''),

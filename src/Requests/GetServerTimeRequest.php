@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Mchekhashvili\RsWaybill\Requests;
+namespace Mchekhashvili\Rs\Waybill\Requests;
 
 use DateTimeImmutable;
 use Saloon\Http\Response;
-use Mchekhashvili\RsWaybill\Enums\Action;
-use Mchekhashvili\RsWaybill\Enums\AuthMethod;
-use Mchekhashvili\RsWaybill\Dtos\InBuilt\DateTimeDto;
-use Mchekhashvili\RsWaybill\Traits\Requests\HasParams;
-use Mchekhashvili\RsWaybill\Interfaces\Requests\HasParamsInterface;
+use Mchekhashvili\Rs\Waybill\Enums\Action;
+use Mchekhashvili\Rs\Waybill\Enums\AuthMethod;
+use Mchekhashvili\Rs\Waybill\Dtos\Primitives\DateTimeDto;
+use Mchekhashvili\Rs\Waybill\Traits\Requests\HasParams;
+use Mchekhashvili\Rs\Waybill\Interfaces\Requests\HasParamsInterface;
 
 class GetServerTimeRequest extends BaseRequest implements HasParamsInterface
 {
@@ -27,12 +27,8 @@ class GetServerTimeRequest extends BaseRequest implements HasParamsInterface
             fn($val) => $val->getContent(),
             $response->xmlReader()->element("{$this->action->value}Response")->sole()->getContent()
         );
-
         $raw = (string) ($data["{$this->action->value}Result"] ?? '');
-
-        $dt = DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s', $raw)
-            ?: new DateTimeImmutable($raw);
-
+        $dt  = DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s', $raw) ?: new DateTimeImmutable($raw);
         return new DateTimeDto(value: $dt);
     }
 }
