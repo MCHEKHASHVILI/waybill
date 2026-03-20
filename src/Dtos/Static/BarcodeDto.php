@@ -1,15 +1,3 @@
 <?php
-
-declare(strict_types=1);
-
-namespace Mchekhashvili\RsWaybill\Dtos\Static;
-
-final class BarcodeDto
-{
-    public function __construct(
-        public readonly string      $code,
-        public readonly string      $name,
-        public readonly int         $unit_id,
-        public readonly string|null $unit_name,
-    ) {}
-}
+// This file is intentionally left as a placeholder to allow git to track the deletion.
+// The class has moved to Mchekhashvili\Rs\Waybill\Dtos\Waybill\BarcodeDto
