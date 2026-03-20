@@ -9,4 +9,4 @@ test("This request does not work on rs side, returns request timeout", function 
     //     'e_dt' => getToday()
     // ], getServiceUserCredentials())));
     // dd($response->getPendingRequest()->body());
-});
+})->skip("This request does not have any explanation in the documentation, and it does not work on rs side, returns request timeout");
