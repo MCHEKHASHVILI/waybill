@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Mchekhashvili\RsWaybill\Mappers;
+namespace Mchekhashvili\Rs\Waybill\Mappers;
 
-use Mchekhashvili\RsWaybill\Dtos\Static\WaybillTypeDto;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillTypeDto;
 
 final class WaybillTypeMapper
 {

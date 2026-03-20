@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mchekhashvili\RsWaybill\Interfaces\Requests;
+namespace Mchekhashvili\Rs\Waybill\Interfaces\Requests;
 
 interface HasParamsInterface
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Mchekhashvili\RsWaybill\Mappers;
+namespace Mchekhashvili\Rs\Waybill\Mappers;
 
-use Mchekhashvili\RsWaybill\Dtos\Static\ProductDto;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\ProductDto;
 
 final class ProductMapper
 {
@@ -37,12 +37,10 @@ final class ProductMapper
             return [];
         }
 
-        // Some endpoints nest products under GOODS_LIST > GOODS
         if (isset($raw['GOODS']) && is_array($raw['GOODS'])) {
             $raw = $raw['GOODS'];
         }
 
-        // Single product comes as an assoc array, not a list
         if (isset($raw['ID'])) {
             return [self::fromXmlArray($raw)];
         }

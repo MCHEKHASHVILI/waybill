@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mchekhashvili\RsWaybill\Exceptions;
+namespace Mchekhashvili\Rs\Waybill\Exceptions;
 
 use InvalidArgumentException;
 

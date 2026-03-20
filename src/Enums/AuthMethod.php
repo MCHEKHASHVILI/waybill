@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mchekhashvili\RsWaybill\Enums;
+namespace Mchekhashvili\Rs\Waybill\Enums;
 
 enum AuthMethod
 {

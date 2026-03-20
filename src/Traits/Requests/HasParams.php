@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Mchekhashvili\RsWaybill\Traits\Requests;
+namespace Mchekhashvili\Rs\Waybill\Traits\Requests;
 
 use InvalidArgumentException;
 use Saloon\XmlWrangler\XmlWriter;
 use Saloon\XmlWrangler\Data\Element;
 use Saloon\XmlWrangler\Data\RootElement;
-use Mchekhashvili\RsWaybill\Enums\EnvelopeNamespace;
+use Mchekhashvili\Rs\Waybill\Enums\EnvelopeNamespace;
 
 trait HasParams
 {
@@ -51,10 +51,7 @@ trait HasParams
         return $params;
     }
 
-    public function getParams(): ?array
-    {
-        return $this->params;
-    }
+    public function getParams(): ?array  { return $this->params; }
 
     public function setAuthParams(mixed $params): void
     {
@@ -72,13 +69,6 @@ trait HasParams
         );
     }
 
-    public function getParam(string $param): mixed
-    {
-        return $this->params[$param] ?? null;
-    }
-
-    public function setParam(string $param, mixed $value): void
-    {
-        $this->params[$param] = $value;
-    }
+    public function getParam(string $param): mixed  { return $this->params[$param] ?? null; }
+    public function setParam(string $param, mixed $value): void { $this->params[$param] = $value; }
 }

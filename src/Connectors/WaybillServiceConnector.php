@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Mchekhashvili\RsWaybill\Connectors;
+namespace Mchekhashvili\Rs\Waybill\Connectors;
 
-use Mchekhashvili\RsWaybill\Authenticators\WaybillServiceAuthenticator;
+use Mchekhashvili\Rs\Waybill\Authenticators\WaybillServiceAuthenticator;
 use Saloon\Http\Connector;
 use Saloon\Http\PendingRequest;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Traits\Body\HasXmlBody;
-use Mchekhashvili\RsWaybill\Requests\BaseRequest;
+use Mchekhashvili\Rs\Waybill\Requests\BaseRequest;
 
 class WaybillServiceConnector extends Connector implements HasBody
 {

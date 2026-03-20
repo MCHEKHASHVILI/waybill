@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Mchekhashvili\RsWaybill\Mappers;
+namespace Mchekhashvili\Rs\Waybill\Mappers;
 
 use DateTimeImmutable;
-use Mchekhashvili\RsWaybill\Dtos\Static\WaybillProductDto;
-use Mchekhashvili\RsWaybill\Enums\WaybillStatus;
-use Mchekhashvili\RsWaybill\Enums\DeliveryCostPayer;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillProductDto;
+use Mchekhashvili\Rs\Waybill\Enums\WaybillStatus;
+use Mchekhashvili\Rs\Waybill\Enums\DeliveryCostPayer;
 
 final class WaybillProductMapper
 {
@@ -38,10 +38,10 @@ final class WaybillProductMapper
             delivery_cost_payer:  isset($data['TRAN_COST_PAYER']) && $data['TRAN_COST_PAYER'] !== '' ? DeliveryCostPayer::tryFrom((int) $data['TRAN_COST_PAYER']) : null,
             delivery_type_id:     isset($data['TRANS_ID'])       && $data['TRANS_ID'] !== ''          ? (int) $data['TRANS_ID']          : null,
             status:               isset($data['STATUS'])         && $data['STATUS'] !== ''            ? WaybillStatus::tryFrom((int) $data['STATUS'])     : null,
-            created_at:           !empty($data['CREATE_DATE'])   ? DateTimeImmutable::createFromFormat("Y-m-d\TH:i:s", $data['CREATE_DATE']) ?: null   : null,
+            created_at:           !empty($data['CREATE_DATE'])   ? DateTimeImmutable::createFromFormat("Y-m-d\TH:i:s", $data['CREATE_DATE'])   ?: null : null,
             activated_at:         !empty($data['ACTIVATE_DATE']) ? DateTimeImmutable::createFromFormat("Y-m-d\TH:i:s", $data['ACTIVATE_DATE']) ?: null : null,
             delivery_date:        !empty($data['DELIVERY_DATE']) ? DateTimeImmutable::createFromFormat("Y-m-d\TH:i:s", $data['DELIVERY_DATE']) ?: null : null,
-            closed_at:            !empty($data['CLOSE_DATE'])    ? DateTimeImmutable::createFromFormat("Y-m-d\TH:i:s", $data['CLOSE_DATE']) ?: null    : null,
+            closed_at:            !empty($data['CLOSE_DATE'])    ? DateTimeImmutable::createFromFormat("Y-m-d\TH:i:s", $data['CLOSE_DATE'])    ?: null : null,
         );
     }
 }

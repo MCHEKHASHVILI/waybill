@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Mchekhashvili\RsWaybill\Exceptions;
+namespace Mchekhashvili\Rs\Waybill\Exceptions;
 
 use LogicException;
-use Mchekhashvili\RsWaybill\Enums\Action;
-
+use Mchekhashvili\Rs\Waybill\Enums\Action;
 
 class ActionPropertyIsNotSetException extends LogicException
 {
-    protected $message = 'Your request is missing a SOAP action. You must add an action property like [protected ' . Action::class . ' $action = Action::CHECK_SERVICE_USER]';
+    protected $message = 'Your request is missing a SOAP action. Add a property like [protected '
+        . Action::class
+        . ' $action = Action::CHECK_SERVICE_USER]';
 }

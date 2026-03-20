@@ -1,6 +1,6 @@
 {
     "name": "mchekhashvili/rs-waybill",
-    "description": "RS Waybill api service implementation",
+    "description": "RS Waybill service SDK — sub-package of the Mchekhashvili RS SDK",
     "authors": [
         {
             "name": "MCHEKHASHVILI",
@@ -12,7 +12,7 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "Mchekhashvili\\RsWaybill\\": "src/"
+            "Mchekhashvili\\Rs\\Waybill\\": "src/"
         }
     },
     "autoload-dev": {

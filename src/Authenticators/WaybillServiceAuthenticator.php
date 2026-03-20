@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Mchekhashvili\RsWaybill\Authenticators;
+namespace Mchekhashvili\Rs\Waybill\Authenticators;
 
 use Saloon\Http\PendingRequest;
 use Saloon\Contracts\Authenticator;
-use Mchekhashvili\RsWaybill\Enums\AuthMethod;
-use Mchekhashvili\RsWaybill\Requests\BaseRequest;
+use Mchekhashvili\Rs\Waybill\Enums\AuthMethod;
+use Mchekhashvili\Rs\Waybill\Requests\BaseRequest;
 
 class WaybillServiceAuthenticator implements Authenticator
 {
@@ -20,29 +20,28 @@ class WaybillServiceAuthenticator implements Authenticator
 
     public function set(PendingRequest $pendingRequest): void
     {
-        /**
-         * @var BaseRequest $baseRequest
-         */
+        /** @var BaseRequest $baseRequest */
         $baseRequest = $pendingRequest->getRequest();
 
         match ($baseRequest->getAuthMethod()) {
-            AuthMethod::TENANT => $this->authenticateTenant($baseRequest),
+            AuthMethod::TENANT       => $this->authenticateTenant($baseRequest),
             AuthMethod::SERVICE_USER => $this->authenticateServiceUser($baseRequest),
-            AuthMethod::BOTH => (function ($request) {
+            AuthMethod::BOTH         => (function ($request) {
                 $this->authenticateTenant($request);
                 $this->authenticateServiceUser($request);
             })($baseRequest),
-            default => self::actAsGuest($baseRequest)
+            default => self::actAsGuest($baseRequest),
         };
     }
 
     protected function authenticateTenant(BaseRequest $baseRequest): void
     {
         $baseRequest->setAuthParams([
-            'user_name' => $this->tenant_username,
+            'user_name'     => $this->tenant_username,
             'user_password' => $this->tenant_password,
         ]);
     }
+
     protected function authenticateServiceUser(BaseRequest $baseRequest): void
     {
         $baseRequest->setAuthParams([
@@ -50,8 +49,6 @@ class WaybillServiceAuthenticator implements Authenticator
             'sp' => $this->service_password,
         ]);
     }
-    private static function actAsGuest(BaseRequest $baseRequest): void
-    {
-        // ...
-    }
+
+    private static function actAsGuest(BaseRequest $baseRequest): void {}
 }

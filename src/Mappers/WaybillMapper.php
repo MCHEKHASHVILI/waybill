@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Mchekhashvili\RsWaybill\Mappers;
+namespace Mchekhashvili\Rs\Waybill\Mappers;
 
 use DateTimeImmutable;
-use Mchekhashvili\RsWaybill\Dtos\Static\WaybillDto;
-use Mchekhashvili\RsWaybill\Enums\WaybillStatus;
-use Mchekhashvili\RsWaybill\Enums\WaybillCategory;
-use Mchekhashvili\RsWaybill\Enums\DeliveryCostPayer;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillDto;
+use Mchekhashvili\Rs\Waybill\Enums\WaybillStatus;
+use Mchekhashvili\Rs\Waybill\Enums\WaybillCategory;
+use Mchekhashvili\Rs\Waybill\Enums\DeliveryCostPayer;
 
 final class WaybillMapper
 {
@@ -53,10 +53,6 @@ final class WaybillMapper
         );
     }
 
-    /**
-     * Serialise a WaybillDto back to the flat params array the RS SOAP API expects.
-     * Null values are omitted so the API uses its own defaults.
-     */
     public static function toParams(WaybillDto $dto): array
     {
         return array_filter([
@@ -90,10 +86,6 @@ final class WaybillMapper
             'CATEGORY'        => $dto->category?->value,
         ], fn($v) => $v !== null);
     }
-
-    // ---------------------------------------------------------------------------
-    // Private helpers — remove the isset/!== '' boilerplate from every field
-    // ---------------------------------------------------------------------------
 
     private static function present(array $data, string $key): bool
     {
