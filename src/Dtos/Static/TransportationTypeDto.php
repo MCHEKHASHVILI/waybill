@@ -1,13 +1,1 @@
-<?php
-
-declare(strict_types=1);
-
-namespace Mchekhashvili\RsWaybill\Dtos\Static;
-
-final class TransportationTypeDto
-{
-    public function __construct(
-        public readonly int    $id,
-        public readonly string $name,
-    ) {}
-}
+<?php // moved to Dtos/Waybill/

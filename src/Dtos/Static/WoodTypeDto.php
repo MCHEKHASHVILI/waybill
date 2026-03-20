@@ -1,14 +1,1 @@
-<?php
-
-declare(strict_types=1);
-
-namespace Mchekhashvili\RsWaybill\Dtos\Static;
-
-final class WoodTypeDto
-{
-    public function __construct(
-        public readonly int         $id,
-        public readonly string      $name,
-        public readonly string|null $description,
-    ) {}
-}
+<?php // moved to Dtos/Waybill/
