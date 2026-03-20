@@ -19,6 +19,10 @@ use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillProductDto;
 use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillTypeDto;
 use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillUnitDto;
 use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WoodTypeDto;
+use Mchekhashvili\Rs\Waybill\Exceptions\WaybillConnectionException;
+use Mchekhashvili\Rs\Waybill\Exceptions\WaybillRequestException;
+use Mchekhashvili\Rs\Waybill\Exceptions\WaybillServerException;
+use Mchekhashvili\Rs\Waybill\Exceptions\WaybillServiceException;
 use Mchekhashvili\Rs\Waybill\Mappers\WaybillMapper;
 use Mchekhashvili\Rs\Waybill\Requests\CloseWaybillRequest;
 use Mchekhashvili\Rs\Waybill\Requests\ConfirmWaybillRequest;
@@ -58,6 +62,7 @@ use Mchekhashvili\Rs\Waybill\Requests\SendWaybillRequest;
 use Mchekhashvili\Rs\Waybill\Requests\UpdateServiceUserRequest;
 use Mchekhashvili\Rs\Waybill\Requests\UpdateWaybillRequest;
 use Mchekhashvili\Rs\Waybill\Requests\WhatIsMyIpRequest;
+use Saloon\Exceptions\Request\RequestException;
 
 /**
  * WaybillService is the single entry point for the RS WaybillService API.
@@ -65,11 +70,25 @@ use Mchekhashvili\Rs\Waybill\Requests\WhatIsMyIpRequest;
  * It hides Saloon's connector/request/response mechanics and returns
  * typed domain objects directly. Callers never interact with Saloon.
  *
+ * Every method can throw one of three SDK exceptions, all extending
+ * WaybillServiceException so a single catch block suffices:
+ *
+ *   WaybillConnectionException — network/transport failure (timeout, DNS, etc.)
+ *   WaybillServerException     — RS server returned an HTML error page
+ *   WaybillRequestException    — RS API returned a SOAP fault or HTTP error
+ *
  * Usage:
  *   $service = new WaybillService(serviceUsername: 'su', servicePassword: 'sp');
- *   $waybill = $service->getWaybill(id: 123);
- *   $list    = $service->getWaybills(dateFrom: '2024-01-01', dateTo: '2024-01-31');
- *   $created = $service->createWaybill($waybillDto);
+ *
+ *   try {
+ *       $waybill = $service->getWaybill(id: 123);
+ *   } catch (WaybillConnectionException $e) {
+ *       // network unreachable, retry later
+ *   } catch (WaybillServerException $e) {
+ *       // RS server error, inspect $e->getResponseBody()
+ *   } catch (WaybillRequestException $e) {
+ *       // SOAP fault or HTTP error from the RS API
+ *   }
  *
  * When combined into the parent RS SDK:
  *   $rs->waybill()->getWaybill(id: 123);
@@ -96,153 +115,184 @@ class WaybillService
     // Server / utility
     // -------------------------------------------------------------------------
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function getServerTime(): DateTimeImmutable
     {
-        return $this->connector->send(new GetServerTimeRequest())->dto()->value;
+        return $this->send(new GetServerTimeRequest())->dto()->value;
     }
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function getMyIp(): string
     {
-        return $this->connector->send(new WhatIsMyIpRequest())->dto()->value;
+        return $this->send(new WhatIsMyIpRequest())->dto()->value;
     }
 
     // -------------------------------------------------------------------------
     // Waybill — reads
     // -------------------------------------------------------------------------
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function getWaybill(int $id): WaybillDto
     {
-        return $this->connector->send(
-            new GetWaybillRequest(['id' => $id])
-        )->dto();
+        return $this->send(new GetWaybillRequest(['id' => $id]))->dto();
     }
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function getWaybillByNumber(string $number): WaybillDto
     {
-        return $this->connector->send(
-            new GetWaybillByNumberRequest(['waybill_number' => $number])
-        )->dto();
+        return $this->send(new GetWaybillByNumberRequest(['waybill_number' => $number]))->dto();
     }
 
     /**
      * @return WaybillDto[]
+     * @throws WaybillServiceException
      */
     public function getWaybills(array $params = []): array
     {
-        return $this->connector->send(new GetWaybillsRequest($params))->dto()->data;
+        return $this->send(new GetWaybillsRequest($params))->dto()->data;
     }
 
     /**
      * @return WaybillDto[]
+     * @throws WaybillServiceException
      */
     public function getWaybillsEx(array $params = []): array
     {
-        return $this->connector->send(new GetWaybillsExRequest($params))->dto()->data;
+        return $this->send(new GetWaybillsExRequest($params))->dto()->data;
     }
 
     /**
      * @return WaybillDto[]
+     * @throws WaybillServiceException
      */
     public function getWaybillsV1(array $params = []): array
     {
-        return $this->connector->send(new GetWaybillsV1Request($params))->dto()->data;
+        return $this->send(new GetWaybillsV1Request($params))->dto()->data;
     }
 
     /**
      * @return WaybillDto[]
+     * @throws WaybillServiceException
      */
     public function getWaybillsAsBuyer(array $params = []): array
     {
-        return $this->connector->send(new GetWaybillsAsBuyerRequest($params))->dto()->data;
+        return $this->send(new GetWaybillsAsBuyerRequest($params))->dto()->data;
     }
 
     /**
      * @return WaybillDto[]
+     * @throws WaybillServiceException
      */
     public function getWaybillsAsBuyerEx(array $params = []): array
     {
-        return $this->connector->send(new GetWaybillsAsBuyerExRequest($params))->dto()->data;
+        return $this->send(new GetWaybillsAsBuyerExRequest($params))->dto()->data;
     }
 
+    /**
+     * Returns the waybill as a base64-encoded PDF string.
+     *
+     * @throws WaybillServiceException
+     */
     public function getWaybillAsPdf(int $waybillId): string
     {
-        return $this->connector->send(
-            new GetWaybillAsPdfRequest(['waybill_id' => $waybillId])
-        )->dto()->value;
+        return $this->send(new GetWaybillAsPdfRequest(['waybill_id' => $waybillId]))->dto()->value;
     }
 
     /**
      * @return WaybillProductDto[]
+     * @throws WaybillServiceException
      */
     public function getWaybillGoodsList(int $waybillId): array
     {
-        return $this->connector->send(
-            new GetWaybillGoodsListRequest(['waybill_id' => $waybillId])
-        )->dto()->data;
+        return $this->send(new GetWaybillGoodsListRequest(['waybill_id' => $waybillId]))->dto()->data;
     }
 
     // -------------------------------------------------------------------------
     // Waybill — writes
     // -------------------------------------------------------------------------
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function createWaybill(WaybillDto $waybill): WaybillCreatedDto
     {
-        return $this->connector->send(
+        return $this->send(
             new CreateWaybillRequest(['waybill' => WaybillMapper::toParams($waybill)])
         )->dto();
     }
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function updateWaybill(WaybillDto $waybill): WaybillCreatedDto
     {
-        return $this->connector->send(
+        return $this->send(
             new UpdateWaybillRequest(['waybill' => WaybillMapper::toParams($waybill)])
         )->dto();
     }
 
+    /**
+     * Activates a saved waybill. Returns the waybill number assigned by RS.
+     *
+     * @throws WaybillServiceException
+     */
     public function sendWaybill(int $waybillId): string
     {
-        return $this->connector->send(
-            new SendWaybillRequest(['waybill_id' => $waybillId])
-        )->dto()->value;
+        return $this->send(new SendWaybillRequest(['waybill_id' => $waybillId]))->dto()->value;
     }
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function confirmWaybill(int $waybillId): bool
     {
-        return $this->connector->send(
-            new ConfirmWaybillRequest(['waybill_id' => $waybillId])
-        )->dto()->result;
+        return $this->send(new ConfirmWaybillRequest(['waybill_id' => $waybillId]))->dto()->result;
     }
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function closeWaybill(int $waybillId): bool
     {
-        return $this->connector->send(
-            new CloseWaybillRequest(['waybill_id' => $waybillId])
-        )->dto()->result;
+        return $this->send(new CloseWaybillRequest(['waybill_id' => $waybillId]))->dto()->result;
     }
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function deleteWaybill(int $waybillId): bool
     {
-        return $this->connector->send(
-            new DeleteWaybillRequest(['waybill_id' => $waybillId])
-        )->dto()->result;
+        return $this->send(new DeleteWaybillRequest(['waybill_id' => $waybillId]))->dto()->result;
     }
 
     // -------------------------------------------------------------------------
     // Waybill templates
     // -------------------------------------------------------------------------
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function createWaybillTemplate(WaybillDto $waybill): WaybillCreatedDto
     {
-        return $this->connector->send(
+        return $this->send(
             new CreateWaybillTemplateRequest(['waybill' => WaybillMapper::toParams($waybill)])
         )->dto();
     }
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function deleteWaybillTemplate(int $templateId): bool
     {
-        return $this->connector->send(
-            new DeleteWaybillTemplateRequest(['waybill_id' => $templateId])
-        )->dto()->result;
+        return $this->send(new DeleteWaybillTemplateRequest(['waybill_id' => $templateId]))->dto()->result;
     }
 
     // -------------------------------------------------------------------------
@@ -251,26 +301,31 @@ class WaybillService
 
     /**
      * @return BarcodeDto[]
+     * @throws WaybillServiceException
      */
     public function getBarcodes(array $params = []): array
     {
-        return $this->connector->send(new GetBarcodesRequest($params))->dto()->data;
+        return $this->send(new GetBarcodesRequest($params))->dto()->data;
     }
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function createBarcode(string $barCode, string $goodsName, int $unitId): bool
     {
-        return $this->connector->send(new CreateBarcodeRequest([
+        return $this->send(new CreateBarcodeRequest([
             'bar_code'   => $barCode,
             'goods_name' => $goodsName,
             'unit_id'    => $unitId,
         ]))->dto()->result;
     }
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function deleteBarcode(string $barCode): bool
     {
-        return $this->connector->send(
-            new DeleteBarcodeRequest(['bar_code' => $barCode])
-        )->dto()->result;
+        return $this->send(new DeleteBarcodeRequest(['bar_code' => $barCode]))->dto()->result;
     }
 
     // -------------------------------------------------------------------------
@@ -279,22 +334,29 @@ class WaybillService
 
     /**
      * @return VehicleDto[]
+     * @throws WaybillServiceException
      */
     public function getVehicleStateNumbers(): array
     {
-        return $this->connector->send(new GetVehicleStateNumbersRequest())->dto()->data;
+        return $this->send(new GetVehicleStateNumbersRequest())->dto()->data;
     }
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function createVehicleStateNumber(string $stateNumber): bool
     {
-        return $this->connector->send(
+        return $this->send(
             new CreateVehicleStateNumberRequest(['car_number' => $stateNumber])
         )->dto()->result;
     }
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function deleteVehicleStateNumber(string $stateNumber): bool
     {
-        return $this->connector->send(
+        return $this->send(
             new DeleteVehicleStateNumberRequest(['car_number' => $stateNumber])
         )->dto()->result;
     }
@@ -305,90 +367,101 @@ class WaybillService
 
     /**
      * @return ExciseCodeDto[]
+     * @throws WaybillServiceException
      */
     public function getExciseCodes(string $searchText = ''): array
     {
         $params = $searchText !== '' ? ['s_text' => $searchText] : [];
-        return $this->connector->send(new GetExciseCodesRequest($params))->dto()->data;
+        return $this->send(new GetExciseCodesRequest($params))->dto()->data;
     }
 
     /**
      * @return WaybillTypeDto[]
+     * @throws WaybillServiceException
      */
     public function getWaybillTypes(): array
     {
-        return $this->connector->send(new GetWaybillTypesRequest())->dto()->data;
+        return $this->send(new GetWaybillTypesRequest())->dto()->data;
     }
 
     /**
      * @return WaybillUnitDto[]
+     * @throws WaybillServiceException
      */
     public function getWaybillUnits(): array
     {
-        return $this->connector->send(new GetWaybillUnitsRequest())->dto()->data;
+        return $this->send(new GetWaybillUnitsRequest())->dto()->data;
     }
 
     /**
      * @return TransportationTypeDto[]
+     * @throws WaybillServiceException
      */
     public function getTransportationTypes(): array
     {
-        return $this->connector->send(new GetTransportationTypesRequest())->dto()->data;
+        return $this->send(new GetTransportationTypesRequest())->dto()->data;
     }
 
     /**
      * @return WoodTypeDto[]
+     * @throws WaybillServiceException
      */
     public function getWoodTypes(): array
     {
-        return $this->connector->send(new GetWoodTypesRequest())->dto()->data;
+        return $this->send(new GetWoodTypesRequest())->dto()->data;
     }
 
     /**
      * @return ErrorCodeDto[]
+     * @throws WaybillServiceException
      */
     public function getErrorCodes(): array
     {
-        return $this->connector->send(new GetErrorCodesRequest())->dto()->data;
+        return $this->send(new GetErrorCodesRequest())->dto()->data;
     }
 
     // -------------------------------------------------------------------------
     // Contragent / TIN lookups
     // -------------------------------------------------------------------------
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function getNameFromTin(string $tin): string
     {
-        return $this->connector->send(
-            new GetNameFromTinRequest(['tin' => $tin])
-        )->dto()->value;
+        return $this->send(new GetNameFromTinRequest(['tin' => $tin]))->dto()->value;
     }
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function getTinFromUnId(int $unId): ContragentDto
     {
-        return $this->connector->send(
-            new GetTinFromUnIdRequest(['un_id' => $unId])
-        )->dto();
+        return $this->send(new GetTinFromUnIdRequest(['un_id' => $unId]))->dto();
     }
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function getPayerTypeFromUnId(int $unId): string
     {
-        return $this->connector->send(
-            new GetPayerTypeFromUnIdRequest(['un_id' => $unId])
-        )->dto()->value;
+        return $this->send(new GetPayerTypeFromUnIdRequest(['un_id' => $unId]))->dto()->value;
     }
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function isVatPayer(int $unId): bool
     {
-        return $this->connector->send(
-            new IsVatPayerRequest(['un_id' => $unId])
-        )->dto()->result;
+        return $this->send(new IsVatPayerRequest(['un_id' => $unId]))->dto()->result;
     }
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function isVatPayerByTin(string $tin): bool
     {
-        return $this->connector->send(
-            new IsVatPayerTinRequest(['tin' => $tin])
-        )->dto()->result;
+        return $this->send(new IsVatPayerTinRequest(['tin' => $tin]))->dto()->result;
     }
 
     // -------------------------------------------------------------------------
@@ -397,16 +470,53 @@ class WaybillService
 
     /**
      * @return ServiceUserDto[]
+     * @throws WaybillServiceException
      */
     public function getServiceUsers(): array
     {
-        return $this->connector->send(new GetServiceUsersRequest())->dto()->data;
+        return $this->send(new GetServiceUsersRequest())->dto()->data;
     }
 
+    /**
+     * @throws WaybillServiceException
+     */
     public function updateServiceUser(array $params): bool
     {
-        return $this->connector->send(
-            new UpdateServiceUserRequest($params)
-        )->dto()->result;
+        return $this->send(new UpdateServiceUserRequest($params))->dto()->result;
+    }
+
+    // -------------------------------------------------------------------------
+    // Internal
+    // -------------------------------------------------------------------------
+
+    /**
+     * Executes a request through the connector and translates any Saloon
+     * RequestException (HTTP 4xx/5xx) into WaybillRequestException.
+     *
+     * Network failures are already converted to WaybillConnectionException
+     * by WaybillServiceConnector::handleSendException().
+     *
+     * HTML error pages are caught by BaseRequest::hasRequestFailed() and
+     * thrown as WaybillServerException before this method returns.
+     *
+     * @throws WaybillConnectionException on network/transport failure
+     * @throws WaybillServerException     on RS HTML error page
+     * @throws WaybillRequestException    on HTTP 4xx/5xx SOAP fault
+     */
+    private function send(\Saloon\Http\Request $request): \Saloon\Http\Response
+    {
+        try {
+            return $this->connector->send($request);
+        } catch (WaybillServiceException $e) {
+            // Already one of our exceptions (Connection or Server) — let it propagate
+            throw $e;
+        } catch (RequestException $e) {
+            throw new WaybillRequestException(
+                message:      'RS WaybillService API error: ' . $e->getMessage(),
+                responseBody: $e->getResponse()->body(),
+                code:         $e->getResponse()->status(),
+                previous:     $e,
+            );
+        }
     }
 }
