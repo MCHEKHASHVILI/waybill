@@ -26,16 +26,7 @@ class CreateWaybillRequest extends BaseRequest implements HasParamsInterface
         // The RS API returns the save_waybill result inside <RESULT>:
         //   <save_waybillResult><RESULT><STATUS>0</STATUS><ID>...</ID>...</RESULT></save_waybillResult>
         // STATUS = 0 means saved; any negative value is an RS error code.
-        try {
-            $result = $response->xmlReader()->xpathValue('//RESULT')->sole();
-        } catch (MissingNodeException $e) {
-            dd($response->body());
-            throw new WaybillRequestException(
-                message: 'RS save_waybill response is missing <RESULT> node',
-                responseBody: $response->body(),
-                previous: $e,
-            );
-        }
+        $result = $response->xmlReader()->xpathValue('//RESULT')->sole();
 
         $status = (int) ($result['STATUS'] ?? 0);
 
