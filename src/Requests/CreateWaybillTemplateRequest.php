@@ -22,7 +22,7 @@ class CreateWaybillTemplateRequest extends BaseRequest implements HasParamsInter
 
     public function createDtoFromResponse(Response $response): WaybillCreatedDto
     {
-        $result = $response->xmlReader()->xpathValue('//r')->sole();
+        $result = $response->xmlReader()->xpathValue('//RESULT')->sole();
 
         $status = (int) ($result['STATUS'] ?? 0);
 
@@ -32,9 +32,9 @@ class CreateWaybillTemplateRequest extends BaseRequest implements HasParamsInter
                 ?? sprintf('RS save_waybill_tamplate failed with status %d', $status);
 
             throw new WaybillRequestException(
-                message:      $message,
+                message: $message,
                 responseBody: $response->body(),
-                code:         $status,
+                code: $status,
             );
         }
 
@@ -53,8 +53,8 @@ class CreateWaybillTemplateRequest extends BaseRequest implements HasParamsInter
         }
 
         return new WaybillCreatedDto(
-            id:          (int)    ($result['ID']             ?? 0),
-            number:      (string) ($result['WAYBILL_NUMBER'] ?? ''),
+            id: (int)    ($result['ID']             ?? 0),
+            number: (string) ($result['WAYBILL_NUMBER'] ?? ''),
             goodsErrors: $goodsErrors,
         );
     }
