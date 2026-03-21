@@ -6,7 +6,7 @@ use Mchekhashvili\Rs\Waybill\Requests\GetWaybillsAsBuyerRequest;
 use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 
 test('returned response is an array of ' . WaybillDto::class, function () {
-    $response = (new WaybillServiceConnector())
+    $response = (new WaybillServiceConnector(...array_values(getServiceUserCredentials())))
         ->send(new GetWaybillsAsBuyerRequest(getServiceUserCredentials()));
 
     $dto = $response->dto();
