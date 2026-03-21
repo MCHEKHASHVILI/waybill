@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Mchekhashvili\Rs\Waybill\Requests;
 
-use Saloon\Http\Response;
-use Mchekhashvili\Rs\Waybill\Enums\Action;
 use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillCreatedDto;
+use Mchekhashvili\Rs\Waybill\Enums\Action;
 use Mchekhashvili\Rs\Waybill\Enums\WaybillErrorCode;
 use Mchekhashvili\Rs\Waybill\Exceptions\WaybillRequestException;
-use Mchekhashvili\Rs\Waybill\Traits\Requests\HasParams;
 use Mchekhashvili\Rs\Waybill\Interfaces\Requests\HasParamsInterface;
+use Mchekhashvili\Rs\Waybill\Traits\Requests\HasParams;
+use Saloon\Http\Response;
+use Saloon\XmlWrangler\Exceptions\MissingNodeException;
 
 class CreateWaybillRequest extends BaseRequest implements HasParamsInterface
 {
@@ -23,9 +24,18 @@ class CreateWaybillRequest extends BaseRequest implements HasParamsInterface
     public function createDtoFromResponse(Response $response): WaybillCreatedDto
     {
         // The RS API returns the save_waybill result inside <RESULT>:
-        //   <save_waybillResult><r><STATUS>0</STATUS><ID>...</ID>...</r></save_waybillResult>
+        //   <save_waybillResult><RESULT><STATUS>0</STATUS><ID>...</ID>...</RESULT></save_waybillResult>
         // STATUS = 0 means saved; any negative value is an RS error code.
-        $result = $response->xmlReader()->xpathValue('//RESULT')->sole();
+        try {
+            $result = $response->xmlReader()->xpathValue('//RESULT')->sole();
+        } catch (MissingNodeException $e) {
+            dd($response->body());
+            throw new WaybillRequestException(
+                message: 'RS save_waybill response is missing <RESULT> node',
+                responseBody: $response->body(),
+                previous: $e,
+            );
+        }
 
         $status = (int) ($result['STATUS'] ?? 0);
 

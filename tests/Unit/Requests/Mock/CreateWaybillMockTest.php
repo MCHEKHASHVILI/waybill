@@ -46,64 +46,63 @@ describe('CreateWaybillRequest — XML body', function () use ($action) {
 describe('CreateWaybillRequest — mocked response', function () use ($action) {
 
     test('createDtoFromResponse returns a WaybillCreatedDto on success', function () use ($action) {
-        // The RS API wraps the save_waybill result in <r>:
-        //   <save_waybillResult><r><STATUS>0</STATUS><ID>...</ID>...</r></save_waybillResult>
+        // The RS API wraps the save_waybill result in <RESULT>:
+        //   <save_waybillResult><RESULT><STATUS>0</STATUS><ID>...</ID>...</RESULT></save_waybillResult>
         $mockXml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-  <soap:Body>
-    <{$action}Response xmlns="http://tempuri.org/">
-      <{$action}Result>
-        <r>
-          <STATUS>0</STATUS>
-          <ID>99999</ID>
-          <WAYBILL_NUMBER>WB-TEST-001</WAYBILL_NUMBER>
-          <GOODS_LIST></GOODS_LIST>
-        </r>
-      </{$action}Result>
-    </{$action}Response>
-  </soap:Body>
+    <soap:Body>
+        <{$action}Response xmlns="http://tempuri.org/">
+            <{$action}Result>
+                <RESULT>
+                    <STATUS>0</STATUS>
+                    <ID>99999</ID>
+                    <WAYBILL_NUMBER>WB-TEST-001</WAYBILL_NUMBER>
+                    <GOODS_LIST></GOODS_LIST>
+                </RESULT>
+            </{$action}Result>
+        </{$action}Response>
+    </soap:Body>
 </soap:Envelope>
 XML;
 
+$mockClient = new MockClient([
+CreateWaybillRequest::class => MockResponse::make($mockXml, 200, ['Content-Type' => 'text/xml']),
+]);
+
+$connector = new WaybillServiceConnector();
+$connector->withMockClient($mockClient);
+
+$dto = $connector->send(new CreateWaybillRequest([]))->dto();
+
+expect($dto)->toBeInstanceOf(WaybillCreatedDto::class);
+expect($dto->id)->toBe(99999);
+expect($dto->number)->toBe('WB-TEST-001');
+expect($dto->hasGoodsErrors())->toBeFalse();
+});
+
+test('WaybillRequestException is thrown when RESULT STATUS is a non-zero error code', function () use ($action) {
+// STATUS = -1001 means "invalid waybill type".
+// createDtoFromResponse() reads STATUS from <RESULT> and throws WaybillRequestException.
+    // Note: ->dto() must be called to trigger createDtoFromResponse().
+    $mockXml = <<<XML <?xml version="1.0" encoding="utf-8" ?>
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+            <soap:Body>
+                <{$action}Response xmlns="http://tempuri.org/">
+                    <{$action}Result>
+                        <RESULT>
+                            <STATUS>-1001</STATUS>
+                            <ID>0</ID>
+                            <GOODS_LIST></GOODS_LIST>
+                        </RESULT>
+                    </{$action}Result>
+                </{$action}Response>
+            </soap:Body>
+        </soap:Envelope>
+        XML;
+
         $mockClient = new MockClient([
-            CreateWaybillRequest::class => MockResponse::make($mockXml, 200, ['Content-Type' => 'text/xml']),
-        ]);
-
-        $connector = new WaybillServiceConnector();
-        $connector->withMockClient($mockClient);
-
-        $dto = $connector->send(new CreateWaybillRequest([]))->dto();
-
-        expect($dto)->toBeInstanceOf(WaybillCreatedDto::class);
-        expect($dto->id)->toBe(99999);
-        expect($dto->number)->toBe('WB-TEST-001');
-        expect($dto->hasGoodsErrors())->toBeFalse();
-    });
-
-    test('WaybillRequestException is thrown when RESULT STATUS is a non-zero error code', function () use ($action) {
-        // STATUS = -1001 means "invalid waybill type".
-        // createDtoFromResponse() reads STATUS from <r> and throws WaybillRequestException.
-        // Note: ->dto() must be called to trigger createDtoFromResponse().
-        $mockXml = <<<XML
-<?xml version="1.0" encoding="utf-8"?>
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-  <soap:Body>
-    <{$action}Response xmlns="http://tempuri.org/">
-      <{$action}Result>
-        <r>
-          <STATUS>-1001</STATUS>
-          <ID>0</ID>
-          <GOODS_LIST></GOODS_LIST>
-        </r>
-      </{$action}Result>
-    </{$action}Response>
-  </soap:Body>
-</soap:Envelope>
-XML;
-
-        $mockClient = new MockClient([
-            CreateWaybillRequest::class => MockResponse::make($mockXml, 200, ['Content-Type' => 'text/xml']),
+        CreateWaybillRequest::class => MockResponse::make($mockXml, 200, ['Content-Type' => 'text/xml']),
         ]);
 
         $connector = new WaybillServiceConnector();
@@ -111,28 +110,38 @@ XML;
 
         // ->dto() triggers createDtoFromResponse() which reads STATUS and throws
         expect(fn() => $connector->send(new CreateWaybillRequest([]))->dto())
-            ->toThrow(WaybillRequestException::class);
-    });
+        ->toThrow(WaybillRequestException::class);
+        });
 
-    test('hasRequestFailed throws WaybillServerException when RS returns an HTML error page', function () {
+        test('hasRequestFailed throws WaybillServerException when RS returns an HTML error page', function () {
         // In Saloon v3, hasRequestFailed() is called from Response::throw(), which Saloon
         // only invokes for non-2xx responses. Since RS always returns HTTP 200 (even for
         // error pages), we test hasRequestFailed() directly on a mock Response.
         // This correctly verifies the guard logic without depending on Saloon's call chain.
-        $htmlBody = '<html><head><title>Runtime Error</title></head><body><h1>Server Error</h1></body></html>';
+        $htmlBody = '<html>
+
+        <head>
+            <title>Runtime Error</title>
+        </head>
+
+        <body>
+            <h1>Server Error</h1>
+        </body>
+
+        </html>';
 
         $mockClient = new MockClient([
-            CreateWaybillRequest::class => MockResponse::make($htmlBody, 200, ['Content-Type' => 'text/html']),
+        CreateWaybillRequest::class => MockResponse::make($htmlBody, 200, ['Content-Type' => 'text/html']),
         ]);
 
         $connector = new WaybillServiceConnector();
         $connector->withMockClient($mockClient);
 
-        $request  = new CreateWaybillRequest([]);
+        $request = new CreateWaybillRequest([]);
         $response = $connector->send($request);
 
         expect(fn() => $request->hasRequestFailed($response))
-            ->toThrow(WaybillServerException::class);
-    });
+        ->toThrow(WaybillServerException::class);
+        });
 
-});
+        });
