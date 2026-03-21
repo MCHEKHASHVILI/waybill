@@ -22,7 +22,10 @@ class CreateWaybillRequest extends BaseRequest implements HasParamsInterface
 
     public function createDtoFromResponse(Response $response): WaybillCreatedDto
     {
-        $result = $response->xmlReader()->xpathValue('//RESULT')->sole();
+        // The RS API returns the save_waybill result inside <r>:
+        //   <save_waybillResult><r><STATUS>0</STATUS><ID>...</ID>...</r></save_waybillResult>
+        // STATUS = 0 means saved; any negative value is an RS error code.
+        $result = $response->xmlReader()->xpathValue('//r')->sole();
 
         $status = (int) ($result['STATUS'] ?? 0);
 
