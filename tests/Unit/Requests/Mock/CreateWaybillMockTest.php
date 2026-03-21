@@ -7,8 +7,8 @@ use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillCreatedDto;
 use Mchekhashvili\Rs\Waybill\Requests\CreateWaybillRequest;
 use Mchekhashvili\Rs\Waybill\Connectors\WaybillServiceConnector;
 use Mchekhashvili\Rs\Waybill\Exceptions\WaybillServerException;
+use Mchekhashvili\Rs\Waybill\Exceptions\WaybillRequestException;
 
-// The SOAP action value for CreateWaybillRequest
 $action = Action::SAVE_WAYBILL->value; // 'save_waybill'
 
 describe('CreateWaybillRequest \u2014 XML body', function () use ($action) {
@@ -45,17 +45,19 @@ describe('CreateWaybillRequest \u2014 XML body', function () use ($action) {
 describe('CreateWaybillRequest \u2014 mocked response', function () use ($action) {
 
     test('createDtoFromResponse returns a WaybillCreatedDto on success', function () use ($action) {
+        // The RS API wraps the save_waybill result in <RESULT> with STATUS=0 on success.
         $mockXml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
     <{$action}Response xmlns="http://tempuri.org/">
       <{$action}Result>
-        <r>
+        <RESULT>
+          <STATUS>0</STATUS>
           <ID>99999</ID>
           <WAYBILL_NUMBER>WB-TEST-001</WAYBILL_NUMBER>
-          <STATUS>0</STATUS>
-        </r>
+          <GOODS_LIST></GOODS_LIST>
+        </RESULT>
       </{$action}Result>
     </{$action}Response>
   </soap:Body>
@@ -74,25 +76,50 @@ XML;
         expect($dto)->toBeInstanceOf(WaybillCreatedDto::class);
         expect($dto->id)->toBe(99999);
         expect($dto->number)->toBe('WB-TEST-001');
+        expect($dto->hasGoodsErrors())->toBeFalse();
     });
 
-    test('hasRequestFailed throws WaybillServerException when Server Error is present', function () {
-        // BaseRequest::hasRequestFailed() now throws WaybillServerException
-        // instead of returning true, so the exception surfaces here.
-        $errorXml = <<<XML
+    test('WaybillRequestException is thrown when RESULT STATUS is a non-zero error code', function () use ($action) {
+        // STATUS = -1001 means "invalid waybill type".
+        // CreateWaybillRequest reads STATUS from <RESULT> and throws WaybillRequestException
+        // with the resolved Georgian message as the exception message.
+        $mockXml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
-    <soap:Fault>
-      <faultcode>soap:Server</faultcode>
-      <faultstring>Server Error</faultstring>
-    </soap:Fault>
+    <{$action}Response xmlns="http://tempuri.org/">
+      <{$action}Result>
+        <RESULT>
+          <STATUS>-1001</STATUS>
+          <ID>0</ID>
+          <GOODS_LIST></GOODS_LIST>
+        </RESULT>
+      </{$action}Result>
+    </{$action}Response>
   </soap:Body>
 </soap:Envelope>
 XML;
 
         $mockClient = new MockClient([
-            CreateWaybillRequest::class => MockResponse::make($errorXml, 500, ['Content-Type' => 'text/xml']),
+            CreateWaybillRequest::class => MockResponse::make($mockXml, 200, ['Content-Type' => 'text/xml']),
+        ]);
+
+        $connector = new WaybillServiceConnector();
+        $connector->withMockClient($mockClient);
+
+        expect(fn() => $connector->send(new CreateWaybillRequest([])))
+            ->toThrow(WaybillRequestException::class);
+    });
+
+    test('WaybillServerException is thrown when RS returns an HTML error page', function () {
+        // The RS server returns HTML (not SOAP XML) with HTTP 200 for runtime errors.
+        // BaseRequest::hasRequestFailed() detects <html in the body and throws
+        // WaybillServerException before the XML parser is ever invoked.
+        // Note: HTTP 200 is intentional — RS always returns 200, even for error pages.
+        $htmlBody = '<html><head><title>Runtime Error</title></head><body><h1>Server Error</h1></body></html>';
+
+        $mockClient = new MockClient([
+            CreateWaybillRequest::class => MockResponse::make($htmlBody, 200, ['Content-Type' => 'text/html']),
         ]);
 
         $connector = new WaybillServiceConnector();
