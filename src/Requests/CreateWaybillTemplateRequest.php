@@ -22,7 +22,7 @@ class CreateWaybillTemplateRequest extends BaseRequest implements HasParamsInter
 
     public function createDtoFromResponse(Response $response): WaybillCreatedDto
     {
-        $result = $response->xmlReader()->xpathValue('//RESULT')->sole();
+        $result = $response->xmlReader()->xpathValue('//r')->sole();
 
         $status = (int) ($result['STATUS'] ?? 0);
 
