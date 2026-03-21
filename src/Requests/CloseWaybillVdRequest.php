@@ -13,19 +13,22 @@ use Mchekhashvili\Rs\Waybill\Traits\Requests\HasParams;
 use Mchekhashvili\Rs\Waybill\Interfaces\Requests\HasParamsInterface;
 
 /**
- * Closes (completes) a waybill.
+ * Closes (completes) a waybill and records the delivery date at the same time.
  *
- * RS API return codes:
+ * RS API signature:
+ *   int close_waybill_vd(string su, string sp, DateTime delivery_date, int waybill_id)
+ *
+ * Return codes:
  *    1   — closed successfully
  *   -1   — failed (generic)
- *  -100  — invalid service credentials  → WaybillRequestException (INVALID_SERVICE_USER_OR_PASSWORD)
- *  -101  — not your waybill            → WaybillRequestException (INVALID_WAYBILL_ID)
+ *  -100  — invalid service credentials  → WaybillRequestException
+ *  -101  — not your waybill             → WaybillRequestException
  */
-class CloseWaybillRequest extends BaseRequest implements HasParamsInterface
+class CloseWaybillVdRequest extends BaseRequest implements HasParamsInterface
 {
     use HasParams;
 
-    protected Action $action = Action::CLOSE_WAYBILL;
+    protected Action $action = Action::CLOSE_WAYBILL_vd;
 
     public function __construct(protected mixed $params = []) {}
 
