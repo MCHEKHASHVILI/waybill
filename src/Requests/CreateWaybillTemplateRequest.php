@@ -7,6 +7,8 @@ namespace Mchekhashvili\Rs\Waybill\Requests;
 use Saloon\Http\Response;
 use Mchekhashvili\Rs\Waybill\Enums\Action;
 use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillCreatedDto;
+use Mchekhashvili\Rs\Waybill\Enums\WaybillErrorCode;
+use Mchekhashvili\Rs\Waybill\Exceptions\WaybillRequestException;
 use Mchekhashvili\Rs\Waybill\Traits\Requests\HasParams;
 use Mchekhashvili\Rs\Waybill\Interfaces\Requests\HasParamsInterface;
 
@@ -20,10 +22,40 @@ class CreateWaybillTemplateRequest extends BaseRequest implements HasParamsInter
 
     public function createDtoFromResponse(Response $response): WaybillCreatedDto
     {
-        $data = $response->xmlReader()->xpathValue('//RESULT')->sole();
+        $result = $response->xmlReader()->xpathValue('//RESULT')->sole();
+
+        $status = (int) ($result['STATUS'] ?? 0);
+
+        if ($status !== 0) {
+            $errorCode = WaybillErrorCode::tryFrom($status);
+            $message   = $errorCode?->message()
+                ?? sprintf('RS save_waybill_tamplate failed with status %d', $status);
+
+            throw new WaybillRequestException(
+                message:      $message,
+                responseBody: $response->body(),
+                code:         $status,
+            );
+        }
+
+        $goodsErrors = [];
+        $goodsList   = $result['GOODS_LIST']['GOODS'] ?? [];
+
+        if (isset($goodsList['ERROR'])) {
+            $goodsList = [$goodsList];
+        }
+
+        foreach ($goodsList as $index => $goods) {
+            $error = (int) ($goods['ERROR'] ?? 0);
+            if ($error !== 0) {
+                $goodsErrors[$index] = $error;
+            }
+        }
+
         return new WaybillCreatedDto(
-            id:     (int)    ($data['ID']             ?? 0),
-            number: (string) ($data['WAYBILL_NUMBER'] ?? ''),
+            id:          (int)    ($result['ID']             ?? 0),
+            number:      (string) ($result['WAYBILL_NUMBER'] ?? ''),
+            goodsErrors: $goodsErrors,
         );
     }
 }

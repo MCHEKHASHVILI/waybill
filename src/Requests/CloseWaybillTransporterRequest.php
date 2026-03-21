@@ -13,19 +13,34 @@ use Mchekhashvili\Rs\Waybill\Traits\Requests\HasParams;
 use Mchekhashvili\Rs\Waybill\Interfaces\Requests\HasParamsInterface;
 
 /**
- * Closes (completes) a waybill.
+ * The transporter company closes (completes) a waybill after delivery.
  *
- * RS API return codes:
+ * RS API signature:
+ *   int close_waybill_transporter(
+ *       string   su, string sp,
+ *       int      waybill_id,
+ *       string   reception_info,
+ *       string   receiver_info,
+ *       DateTime delivery_date
+ *   )
+ *
+ * params keys:
+ *   waybill_id     — ID of the waybill
+ *   reception_info — sender info (optional)
+ *   receiver_info  — recipient info (optional)
+ *   delivery_date  — delivery datetime (ISO 8601)
+ *
+ * Return codes:
  *    1   — closed successfully
- *   -1   — failed (generic)
- *  -100  — invalid service credentials  → WaybillRequestException (INVALID_SERVICE_USER_OR_PASSWORD)
- *  -101  — not your waybill            → WaybillRequestException (INVALID_WAYBILL_ID)
+ *   -1   — failed
+ *  -100  — invalid credentials  → WaybillRequestException
+ *  -101  — not your waybill     → WaybillRequestException
  */
-class CloseWaybillRequest extends BaseRequest implements HasParamsInterface
+class CloseWaybillTransporterRequest extends BaseRequest implements HasParamsInterface
 {
     use HasParams;
 
-    protected Action $action = Action::CLOSE_WAYBILL;
+    protected Action $action = Action::CLOSE_WAYBILL_TRANSPORTER;
 
     public function __construct(protected mixed $params = []) {}
 
@@ -48,7 +63,7 @@ class CloseWaybillRequest extends BaseRequest implements HasParamsInterface
 
         if ($result === -101) {
             throw new WaybillRequestException(
-                message:      'You do not own this waybill and cannot close it.',
+                message:      'You are not the transporter of this waybill and cannot close it.',
                 responseBody: $response->body(),
                 code:         -101,
             );
