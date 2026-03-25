@@ -48,6 +48,7 @@ describe('CreateWaybillRequest — mocked response', function () use ($action) {
         // The RS API wraps the save_waybill result in <RESULT>:
         //   <save_waybillResult><RESULT><STATUS>0</STATUS><ID>...</ID>...</RESULT></save_waybillResult>
         // STATUS = 0 means saved successfully.
+        // createDtoFromResponse() reads this via xpathValue('//RESULT').
         $mockXml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -83,7 +84,8 @@ XML;
 
     test('WaybillRequestException is thrown when RESULT STATUS is a non-zero error code', function () use ($action) {
         // STATUS = -1001 means "invalid waybill type".
-        // createDtoFromResponse() reads STATUS from <RESULT> and throws WaybillRequestException.
+        // createDtoFromResponse() reads STATUS from <RESULT> via xpathValue('//RESULT')
+        // and throws WaybillRequestException for any non-zero STATUS.
         // ->dto() must be called to trigger createDtoFromResponse().
         $mockXml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
