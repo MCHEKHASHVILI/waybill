@@ -11,7 +11,7 @@ use Mchekhashvili\Rs\Waybill\Exceptions\WaybillRequestException;
 
 $action = Action::SAVE_WAYBILL->value; // 'save_waybill'
 
-describe('CreateWaybillRequest — XML body', function () use ($action) {
+describe('CreateWaybillRequest \u2014 XML body', function () use ($action) {
 
     test('SOAP action enum is SAVE_WAYBILL', function () {
         $request = new CreateWaybillRequest([]);
@@ -42,18 +42,12 @@ describe('CreateWaybillRequest — XML body', function () use ($action) {
 
 });
 
-describe('CreateWaybillRequest — mocked response', function () use ($action) {
+describe('CreateWaybillRequest \u2014 mocked response', function () use ($action) {
 
     test('createDtoFromResponse returns a WaybillCreatedDto on success', function () use ($action) {
-        // The RS API returns the save_waybill result inside <RESULT>:
-        //   <save_waybillResult>
-        //     <RESULT>
-        //       <STATUS>0</STATUS>
-        //       <ID>...</ID>
-        //       <GOODS_LIST>...</GOODS_LIST>
-        //     </RESULT>
-        //   </save_waybillResult>
-        // STATUS = 0 means saved. createDtoFromResponse() reads this via xpathValue('//RESULT').
+        // The RS API wraps the save_waybill result in <RESULT>.
+        // STATUS = 0 means saved successfully.
+        // createDtoFromResponse() reads this via xpathValue('//RESULT').
         $mockXml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">

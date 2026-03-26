@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Mchekhashvili\Rs\Waybill\Requests;
 
-use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillCreatedDto;
+use Saloon\Http\Response;
 use Mchekhashvili\Rs\Waybill\Enums\Action;
+use Mchekhashvili\Rs\Waybill\Dtos\Waybill\WaybillCreatedDto;
 use Mchekhashvili\Rs\Waybill\Enums\WaybillErrorCode;
 use Mchekhashvili\Rs\Waybill\Exceptions\WaybillRequestException;
 use Mchekhashvili\Rs\Waybill\Interfaces\Requests\HasParamsInterface;
 use Mchekhashvili\Rs\Waybill\Traits\Requests\HasParams;
-use Saloon\Http\Response;
-use Saloon\XmlWrangler\Exceptions\MissingNodeException;
 
 class CreateWaybillRequest extends BaseRequest implements HasParamsInterface
 {
@@ -23,8 +22,14 @@ class CreateWaybillRequest extends BaseRequest implements HasParamsInterface
 
     public function createDtoFromResponse(Response $response): WaybillCreatedDto
     {
-        // The RS API returns the save_waybill result inside <RESULT>:
-        //   <save_waybillResult><RESULT><STATUS>0</STATUS><ID>...</ID>...</RESULT></save_waybillResult>
+        // The RS API wraps the save_waybill result in <RESULT>:
+        //   <save_waybillResult>
+        //     <RESULT>
+        //       <STATUS>0</STATUS>
+        //       <ID>...</ID>
+        //       <GOODS_LIST>...</GOODS_LIST>
+        //     </RESULT>
+        //   </save_waybillResult>
         // STATUS = 0 means saved; any negative value is an RS error code.
         $result = $response->xmlReader()->xpathValue('//RESULT')->sole();
 
@@ -36,9 +41,9 @@ class CreateWaybillRequest extends BaseRequest implements HasParamsInterface
                 ?? sprintf('RS save_waybill failed with status %d', $status);
 
             throw new WaybillRequestException(
-                message: $message,
+                message:      $message,
                 responseBody: $response->body(),
-                code: $status,
+                code:         $status,
             );
         }
 
@@ -59,8 +64,8 @@ class CreateWaybillRequest extends BaseRequest implements HasParamsInterface
         }
 
         return new WaybillCreatedDto(
-            id: (int)    ($result['ID']             ?? 0),
-            number: (string) ($result['WAYBILL_NUMBER'] ?? ''),
+            id:          (int)    ($result['ID']             ?? 0),
+            number:      (string) ($result['WAYBILL_NUMBER'] ?? ''),
             goodsErrors: $goodsErrors,
         );
     }
